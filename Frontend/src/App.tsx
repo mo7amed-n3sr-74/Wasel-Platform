@@ -1,7 +1,7 @@
 import { Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useProps } from "./components/PropsProvider";
-import { setAccessToken } from "./utils/AxiosInstance";
+import { privateHttpClient } from "./api/client/HttpClient";
 import { useNotification } from "./components/NotificationContext";
 // Auth Pages
 import Account from "./pages/auth/Account";
@@ -16,7 +16,7 @@ import Profile from "./pages/Profile";
 // External Libraries
 import "./i18n";
 import { useTranslation } from "react-i18next";
-import axios from "axios";
+import { isAxiosError } from "axios";
 import Shipments from "./pages/Shipments";
 import NewShipment from "./pages/NewShipment";
 import NotFound from "./pages/NotFound";
@@ -25,49 +25,32 @@ import Shipment from "./pages/Shipment";
 import DashLayout from "./pages/dashboard/DashLayout";
 import DashHome from "./pages/dashboard/DashHome";
 import HasAccess from "./components/HasAccess";
+import { useRefresh } from "./api/hooks/auth/useRefresh";
+import { useMe } from "./api/hooks/auth/useMe";
 
 function App() {
 	const { i18n, t } = useTranslation();
 	const { setUser } = useProps();
 	const { addNotification } = useNotification();
-
-	const refresh = async () => {
-		try {
-			const { user, accessToken } = await axios
-				.post(
-					`${import.meta.env.VITE_BACKEND_URL}/auth/refresh`,
-					{},
-					{
-						withCredentials: true,
-					},
-				)
-				.then(async (res) => {
-					const { data } = await axios.get(
-						`${import.meta.env.VITE_BACKEND_URL}/user/me`,
-						{
-							headers: {
-								Authorization: `Bearer ${res.data}`,
-							},
-						},
-					);
-
-					return {
-						user: data,
-						accessToken: res.data,
-					};
-				});
-
-			setAccessToken(accessToken);
-			setUser(user);
-		} catch (err) {
-			addNotification(t(err.message), "error", 5000);
-		}
-	};
+	const {
+		data: refreshRes,
+		mutate: refresh,
+		isError: isRefreshError,
+		error: refreshError,
+		isSuccess: isRefreshSuccess
+	} = useRefresh();
+	const {
+		data: user,
+		mutate: currentUser,
+		isError: isUserError,
+		error: userError,
+		isSuccess: isUserSuccess
+	} = useMe()
 
 	useEffect(() => {
 		i18n.changeLanguage("ar");
 
-		const authPages = [
+		const noAuthPages = [
 			"/account",
 			"/signin",
 			"/signup",
@@ -76,10 +59,44 @@ function App() {
 			"/resetpassword",
 		];
 		const currentPath = window.location.pathname;
-		if (!authPages.includes(currentPath)) {
+
+		if (!noAuthPages.includes(currentPath)) {
 			refresh();
 		}
 	}, []);
+
+	useEffect(() => {
+		if (isRefreshSuccess) {
+			privateHttpClient.setAccessToken(refreshRes.data);
+			currentUser();
+		}
+
+		if (isRefreshError) {
+			const axiosMsg = isAxiosError(refreshError)? refreshError.response?.data?.message : "حدث خطأ ما";
+
+			addNotification(
+				t(axiosMsg),
+				"error",
+				5000
+			)
+		}
+	}, [isRefreshSuccess, isRefreshError, refreshError]);
+
+	useEffect(() => {
+		if (isUserSuccess) {			
+			setUser(user.data)
+		}
+
+		if (isUserError) {
+			const axiosMsg = isAxiosError(userError)? userError.response?.data?.message : "حدث خطأ ما";
+
+			addNotification(
+				t(axiosMsg),
+				"error",
+				5000
+			)
+		}
+	}, [isUserSuccess, isUserError, userError]);
 
 	return (
 		<BrowserRouter>

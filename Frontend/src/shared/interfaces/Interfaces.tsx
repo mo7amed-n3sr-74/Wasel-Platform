@@ -1,5 +1,6 @@
 export interface Shipment {
     id?: string,
+    shipmentId?: string,
     origin: string,
     origin_lat?: number,
     origin_lng?: number,
@@ -65,5 +66,22 @@ export interface ShipmentFilter {
     urgent: boolean,
     minWeight: number | undefined,
     maxWeight: number | undefined
+}
+
+export interface Offer {
+    price: number,
+    proposal: string
+}
+
+export interface ShipmentAttachment {
+    id: string,
+    url: string,
+    attachmentType: string,
+    name: string,
+    extension: string,
+    size: string,
+    shipmentId: string,
+    createdAt: string,
+    updatedAt: string
 }
 

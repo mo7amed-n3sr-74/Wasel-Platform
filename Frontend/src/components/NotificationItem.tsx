@@ -38,7 +38,7 @@ function NotificationItem({ notification, onClose }: Props) {
     }
 
     return (
-    <div onClick={onClose} className={`${notifyCustmization[type].border} relative w-full flex items-start justify-between -right-full rounded-sm p-3 gap-2 bg-(--secondary-color) shadow-sm shadow-balck/10 notify-animate duration-300 hover:scale-95 cursor-pointer`}>
+    <div onClick={onClose} className={`${notifyCustmization[type].border} relative w-full flex items-start justify-between -right-full rounded-sm p-3 gap-2 bg-(--secondary-color) shadow-sm shadow-balck/25 notify-animate duration-200 hover:scale-95 cursor-pointer`}>
             <div className="flex items-start gap-1">
                 <div className={`${notifyCustmization[type].iconStyle} flex items-center justify-center rounded-full`}>
                     <span className='text-2xl'>

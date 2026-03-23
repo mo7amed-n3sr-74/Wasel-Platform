@@ -213,15 +213,21 @@ export class ShipmentsService {
     });
 
     for (const file of shipmentAssets.shipmentImgs) {
-      const fileType = file.mimetype.split('/')[0];
+      const type = file.mimetype.split('/')[0];
+      const name = file.originalname.split(".").slice(0, file.originalname.split(".").length - 1).join(".");
+      const extension = file.originalname.split(".").splice(file.originalname.split(".").length - 1, 1)[0];
+      const size = (file.size / 1024 / 1024).toFixed(2); // MB
       const imageUrl = await this.R2Service.uploadFile(
         file,
         `users/${userId}/shipments/images/${Date.now()}-${file.originalname}`,
       );
       await this.prisma.shipmentAttachment.create({
         data: {
-          attachmentType: fileType === 'image' ? 'Image' : 'File',
+          attachmentType: type === 'image' ? 'Image' : 'File',
           url: imageUrl,
+          name,
+          extension,
+          size: `${size} MB`,
           shipment: {
             connect: {
               id: newShipment.id,
@@ -232,15 +238,21 @@ export class ShipmentsService {
     }
 
     for (const file of shipmentAssets.shipmentDocs) {
-      const fileType = file.mimetype.split('/')[0];
+      const type = file.mimetype.split('/')[0];
+      const name = file.originalname.split(".").slice(0, file.originalname.split(".").length - 1).join(".");
+      const extension = file.originalname.split(".").splice(file.originalname.split(".").length - 1, 1)[0];
+      const size = (file.size / 1024 / 1024).toFixed(2); // MB
       const docUrl = await this.R2Service.uploadFile(
         file,
         `users/${userId}/shipments/docs/${Date.now()}-${file.originalname}`,
       );
       await this.prisma.shipmentAttachment.create({
         data: {
-          attachmentType: fileType === 'image' ? 'Image' : 'File',
+          attachmentType: type === 'image' ? 'Image' : 'File',
           url: docUrl,
+          name,
+          extension,
+          size: `${size} MB`,
           shipment: {
             connect: {
               id: newShipment.id,

@@ -10,7 +10,7 @@ interface Props {
 
 const NotificationContainer: React.FC<Props> = ({ notifications, onRemove }) => {
     return (
-        <div className="w-90 max-h-screen fixed top-0 right-0 flex flex-col gap-3 p-5 overflow-hidden z-20"> 
+        <div className={`${notifications.length > 0? "flex": "hidden" } w-90 max-h-screen fixed top-0 right-0 flex-col gap-3 p-5 overflow-hidden z-20`}> 
             {
                 notifications?.map((notification, idx) => {
                     return <NotificationItem key={idx} notification={notification} onClose={() => onRemove(notification.id)}/>

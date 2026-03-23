@@ -3,13 +3,9 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { useProps } from "@/components/PropsProvider";
 import { useNotification } from "../../components/NotificationContext";
-import { httpClient } from "@/api/client/HttpClient";
+import { privateHttpClient } from "@/api/client/HttpClient";
 import type { SigninForm } from "@/shared/interfaces/Interfaces";
-import { 
-	PiEnvelopeLight, 
-	PiLockLight, 
-	PiSignIn 
-} from "react-icons/pi";
+import { PiEnvelopeLight, PiLockLight, PiSignIn } from "react-icons/pi";
 // External Library
 import axios from "axios";
 import Main from "@/components/Main";
@@ -79,11 +75,13 @@ function Signin() {
 				});
 
 			setUser(user);
-			httpClient.setAccessToken(accessToken);
+			privateHttpClient.setAccessToken(accessToken);
 			navigate("/shipments");
 		} catch (err) {
 			const axiosMeg = axios.isAxiosError(err)
-				? err.response?.data?.message? err.response?.data?.message : err.message
+				? err.response?.data?.message
+					? err.response?.data?.message
+					: err.message
 				: "شئ ما خطا";
 			addNotification(t(axiosMeg), "error", 5000);
 		} finally {

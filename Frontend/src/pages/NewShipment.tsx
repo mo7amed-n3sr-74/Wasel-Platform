@@ -61,7 +61,6 @@ function NewShipment() {
     const { t } = useTranslation();
     const spansRef = useRef<HTMLSpanElement[]>([]);
     const {
-        // mutateAsync,
         data,
         mutate, 
         isPending, 
@@ -178,7 +177,7 @@ function NewShipment() {
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement | HTMLInputElement>) => {
         e.preventDefault();
-
+        console.log(newShipment )
         if (shipmentImgs.length < 3) {
             addNotification(
                 'لا يمكنك رفع أقل من 3 صور',
@@ -607,6 +606,7 @@ function NewShipment() {
                                                         <SelectLabel>
                                                             وسائل الدفع
                                                         </SelectLabel>
+                                                        <SelectItem value="ON_DELIVER">الدفع عند الإستلام</SelectItem>
                                                         <SelectItem value="BANK_TRNASFER">تحويل بنكي</SelectItem>
                                                     </SelectGroup>
                                                 </SelectContent>

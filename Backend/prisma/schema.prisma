@@ -155,6 +155,9 @@ model ShipmentAttachment {
 
   attachmentType AttachmentType
   url String @db.LongText
+  name String?
+  extension String?
+  size String?
 
   createAt DateTime @default(now())
   updatedAt DateTime @updatedAt

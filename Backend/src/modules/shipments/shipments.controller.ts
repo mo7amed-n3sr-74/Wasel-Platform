@@ -35,14 +35,11 @@ export class ShipmentsController {
   }
 
   @Get(':id')
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Roles(['MANUFACTURER', 'ADMIN'])
   getShipment(@Param('id') shipmentId: string) {
     return this.shipmentsService.getShipment(shipmentId);
   }
 
   @Get()
-  // @Roles(['ADMIN'])
   getShipments(@Query() query: { 
     search: string,
     type: string, 

@@ -5,7 +5,7 @@ export function useCreateShipment() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: (newShipment: FormData) => {
+		mutationFn: (newShipment: Record<string, unknown>) => {
 			return shipmentsService.createShipment(newShipment);
 		},
 

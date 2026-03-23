@@ -1,7 +1,7 @@
-import type { Shipment } from "@/shared/interfaces/Interfaces";
 import axios from "axios";
 
-class HttpClient {
+// Private
+class PrivateHttpClient {
 
     private instance;
     public accessToken: string | null = null;
@@ -94,14 +94,46 @@ class HttpClient {
         )
     }
 
+    // Request actions
     get(url: string) {
         return this.instance.get(url);
     }
 
-    post(url: string, data?: Shipment) {
+    post(url: string, data?: Record<string, unknown>) {
+        return this.instance.post(url, data);
+    }
+
+    put(url: string, data: Record<string, unknown>) {
+        return this.instance.put(url, data);
+    }
+
+    delete(url: string) {
+        return this.instance.delete(url);
+    }
+
+}
+export const privateHttpClient = new PrivateHttpClient();
+
+
+// Public
+class PublicHttpClient {
+
+    private instance;
+
+    constructor() {
+        this.instance = axios.create({
+            baseURL: import.meta.env.VITE_BACKEND_URL,
+            withCredentials: true
+        })
+    }
+
+    get(url: string) {
+        return this.instance.get(url);
+    }
+
+    post(url: string, data?: Record<string, unknown>) {
         return this.instance.post(url, data);
     }
 
 }
-
-export const httpClient = new HttpClient();
+export const publicHttpClient = new PublicHttpClient();
