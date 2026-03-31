@@ -201,3 +201,8 @@ body {
     @apply bg-background text-foreground;
 	}
 }
+
+/* Leaflet */
+.leaflet-map-pane {
+	z-index: 20;
+}

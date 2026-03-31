@@ -7,7 +7,7 @@ export function useRefresh() {
     return (
         useMutation({
             mutationKey: ["refresh"],
-            mutationFn: () => authService.refresh()
+            mutationFn: () => authService.refresh(),
         })
     )
 }

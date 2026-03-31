@@ -118,7 +118,8 @@ function Shipments() {
                                 <h4 className="font-main text-xl font-medium text-(--primary-text) mb-3">الحالة</h4>
                                 <div className="flex items-center justify-between gap-3">
                                     <label htmlFor='urgent-btn' className="font-main text-lg font-medium text-(--secondary-text)">حمولة عاجلة</label>
-                                    <Switch dir='ltr' id='urgent-btn' size='default' onCheckedChange={() => { setQuery({ ...query, urgent: !query.urgent }) }}></Switch>                                </div>
+                                    <Switch dir='ltr' id='urgent-btn' size='default' onCheckedChange={() => { setQuery({ ...query, urgent: !query.urgent }) }}></Switch>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -137,30 +138,6 @@ function Shipments() {
                                     })} name='search' className="h-12 w-full font-main text-base focus:outline-none placeholder:font-light placeholder:text-sm" placeholder="ابحث عن حمولتك بمكان الوصول أو الانطلاق" />
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    {/* <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <button className="h-12 flex items-center gap-1 px-4 bg-[#7D807F]/10 border border-(--primary-color)/25 rounded-lg cursor-pointer">
-                                                <span className="font-main font-medium text-xl text-(--primary-text)">فرز</span>
-                                                <PiCaretDownFill className="" size={20}/>
-                                            </button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent>
-                                            <DropdownMenuGroup>
-                                                <DropdownMenuCheckboxItem
-                                                    checked={showLatest}
-                                                    onCheckedChange={setShowLatest}
-                                                >
-                                                    <span className='font-main text-(--primary-text)'>الأحدث</span>
-                                                </DropdownMenuCheckboxItem>
-                                                <DropdownMenuCheckboxItem
-                                                    checked={showOldest}
-                                                    onCheckedChange={setShowOldest}
-                                                >
-                                                    <span className='font-main text-(--primary-text)'>الأقدم</span>
-                                                </DropdownMenuCheckboxItem>
-                                            </DropdownMenuGroup>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu> */}
                                     <div className="w-26 h-12 flex items-center gap-2 px-2 py-1.5 bg-[#7D807F]/10 border border-(--primary-color)/25 rounded-lg">
                                         <Tooltip>
                                             <TooltipTrigger className='w-1/2 h-full'>

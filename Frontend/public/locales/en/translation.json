@@ -12,5 +12,8 @@
     "إضافة حمولة جديدة": "add new shipment",
     "عرض الصفوف": "rows view",
     "عرض الكروت": "card view",
-    "من فضلك جرب في وقتاً لاحق": "Please try again later"
+    "من فضلك جرب في وقتاً لاحق": "Please try again later",
+    "إختار تاريخ الإنطلاق": "Pick a pickup date",
+    "إختار تاريخ الوصول": "Pick a deliver date",
+    "الرصيد": "balance"
 }

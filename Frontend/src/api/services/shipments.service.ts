@@ -15,6 +15,10 @@ class ShipmentsService {
 		return privateHttpClient.get(`/shipments?${params}`);
 	}
 
+	getShipmentOffers(shipmentId: string) {
+		return privateHttpClient.get(`/shipments/${shipmentId}/offers`)
+	}
+
 	createShipment(data: Record<string, unknown>) {
 		return privateHttpClient.post("/shipments/create", data);
 	}

@@ -22,5 +22,8 @@
     "active shipments": "الحمولات النشطة",
     "completed shipments": "الحمولات المتكملة",
     "total spent": "إجمالي المصاريف",
-    "Avg Delivery Time": "متوسط التوصيل"
+    "Avg Delivery Time": "متوسط التوصيل",
+    "Pick a pickup date": "إختار تاريخ الإنطلاق",
+    "Pick a deliver date": "إختار تاريخ الوصول",
+    "balance": "الرصيد"
 }

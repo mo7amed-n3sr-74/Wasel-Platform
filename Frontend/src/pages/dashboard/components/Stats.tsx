@@ -1,5 +1,4 @@
 import {
-    PiShippingContainer ,
     PiWallet,
     PiClock,
     PiPath,
@@ -29,9 +28,14 @@ function Stats() {
             hasAccess: ["manufacturer"]
         },
         {
+            key: "balance",
+            icon: PiWallet,
+            hasAccess: ["admin", "manufacturer"]
+        },
+        {
             key: "Avg Delivery Time",
             icon: PiClock,
-            hasAccess: ["manufacturer"]
+            hasAccess: ["admin"]
         },
     ]
 

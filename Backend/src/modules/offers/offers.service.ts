@@ -125,7 +125,8 @@ export class OffersService {
 
     const acceptedOffer = await this.prisma.offer.update({
       where: {
-        id: offerId
+        id: offerId,
+        status: "PENDING"
       },
       data: {
         status: "ACCEPTED"
@@ -168,7 +169,8 @@ export class OffersService {
 
     const updatedOffer = await this.prisma.offer.update({
       where: {
-        id: offerId
+        id: offerId,
+        status: "PENDING"
       }, 
       data: {
         status: "REJECTED"

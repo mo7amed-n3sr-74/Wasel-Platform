@@ -2,46 +2,17 @@ import { useLogout } from "@/api/hooks/user/useLogout";
 import { useEffect } from "react";
 import {
     PiSidebar,
-    PiHouse,
-    PiShippingContainer,
     PiSignOut,
-    PiTicket,
-    PiGear,
-    // PiWallet
 } from "react-icons/pi";
 import { useNotification } from "@/components/NotificationContext";
 import { isAxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import { useProps } from "@/components/PropsProvider";
+import HasAccess from "@/components/HasAccess";
+import { sidebarItems } from "@/shared/data/data";
+import { Link } from "react-router-dom";
 
 function DashSidebar({ closeSidebar, setCloseSidebar }: { closeSidebar: boolean, setCloseSidebar: (v: boolean) => void }) {    
-
-    const sidebarItems = [
-        {
-            name: "الرئيسية",
-            icon: PiHouse,
-            path: "",
-            permission: ["admin", ""],
-        },
-        {
-            name: "الحمولات",
-            icon: PiShippingContainer,
-            path: "",
-            permission: ["admin", ""]
-        },
-        {
-            name: "العروض",
-            icon: PiTicket,
-            path: "",
-            permission: ["admin", ""]
-        },
-        {
-            name: "الإعدادت",
-            icon: PiGear,
-            path: "",
-            permission: ["admin", ""]
-        },
-    ];
 
     const { setUser } = useProps();
     const { mutate, error, isError, isSuccess } = useLogout();
@@ -82,10 +53,14 @@ function DashSidebar({ closeSidebar, setCloseSidebar }: { closeSidebar: boolean,
                                 sidebarItems.map((item, idx) => {
                                     const Icon = item.icon;
                                     return (
-                                        <li key={`sidebar-item-${idx}`} className="group w-full h-12 px-4 flex items-center gap-3 rounded-10 bg-(--primary-color)/4 duration-300 hover:bg-(--primary-color) cursor-pointer">
-                                            <Icon className="group-hover:text-(--secondary-color) text-xl text-(--primary-color)"/>
-                                            <span className="font-main text-base text-(--primary-color) group-hover:text-(--secondary-color) capitalize whitespace-nowrap">{ item.name }</span>
-                                        </li>
+                                        <HasAccess key={idx} role={item.hasAccess}>
+                                            <Link to={{ pathname: item.path }}>
+                                                <li key={`sidebar-item-${idx}`} className="group w-full h-12 px-4 flex items-center gap-3 rounded-10 bg-(--primary-color)/4 duration-300 hover:bg-(--primary-color) cursor-pointer">
+                                                    <Icon className="group-hover:text-(--secondary-color) text-xl text-(--primary-color)"/>
+                                                    <span className="font-main text-base text-(--primary-color) group-hover:text-(--secondary-color) capitalize whitespace-nowrap">{ item.name }</span>
+                                                </li>
+                                            </Link>
+                                        </HasAccess>
                                     )
                                 })
                             }

@@ -10,21 +10,24 @@ import {
   QueryClient,
   QueryClientProvider
 } from "@tanstack/react-query";
+import { DirectionProvider } from "@/components/ui/direction"
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
-      <PropsProvider>
-        <NotificationProvider>
-          <TooltipProvider>
-            <QueryClientProvider  client={queryClient}>
-              <App />
-            </QueryClientProvider>
-          </TooltipProvider>
-        </NotificationProvider>
-      </PropsProvider>
+      <DirectionProvider>
+        <PropsProvider>
+          <NotificationProvider>
+            <TooltipProvider>
+              <QueryClientProvider  client={queryClient}>
+                <App />
+              </QueryClientProvider>
+            </TooltipProvider>
+          </NotificationProvider>
+        </PropsProvider>
+      </DirectionProvider>
     </AuthProvider>
   </StrictMode>
 )

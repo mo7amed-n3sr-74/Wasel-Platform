@@ -2,15 +2,14 @@ import ImagesCarousel from "./ImagesCarousel"
 import { 
     PiUser,
     PiClock,
-    PiMapPinArea
 } from "react-icons/pi"
 import { Link } from "react-router-dom"
-import { ar_months } from "@/shared/data/data"
 import type { Shipment } from "@/shared/interfaces/Interfaces"
+import dayjs from "dayjs"
 
 function ShipmentCard({ shipment }: { shipment: Shipment }) {
     return (
-        <div className="col-span-6 xxl:col-span-4 rounded-20 p-3 shadow-lg shadow-black/10 bg-[#F7F8FA] border border-(--primary-color)/25">
+        <div className="col-span-6 xxl:col-span-4 flex flex-col justify-between rounded-20 p-3 shadow-lg shadow-black/10 bg-[#F7F8FA] border border-(--primary-color)/25">
             <div className="h-42 rounded-10 overflow-hidden">
                 {
                     shipment.attachments && (
@@ -40,18 +39,18 @@ function ShipmentCard({ shipment }: { shipment: Shipment }) {
                 </div>
             </div>
 
-            <div className="flex items-center justify-center gap-3 my-2">
-                <div className="flex flex-col items-center">
-                    <h4 className="font-main font-medium text-2xl text-(--primary-text)">{ shipment.origin }</h4>
+            <div className="flex items-center justify-evenly gap-3 my-2">
+                <div className="flex flex-col items-center justify-center">
+                    <h4 className="font-main font-medium text-xl text-(--primary-text)">{ shipment.origin.split("-")[0].split(" ")[0] }</h4>
                     <h5 className="font-main font-medium text-base text-(--secondary-text)/75">
-                        { shipment.pickupAt.split('-')[2] } { ar_months[shipment.pickupAt.split('-')[1] as keyof typeof ar_months] }
+                        { dayjs(shipment.pickupAt).format("DD MMM") }
                     </h5>
                 </div>
                 <img src="/arrow.svg" alt="icon" className="mt-2.5 h-4"/>
-                <div className="flex flex-col items-center">
-                    <h4 className="font-main font-medium text-2xl text-(--primary-text)">{ shipment.destination }</h4>
+                <div className="flex flex-col items-center justify-center">
+                    <h4 className="font-main font-medium text-xl text-(--primary-text)">{ shipment.destination.split("-")[0].split(" ")[0] }</h4>
                     <h5 className="font-main font-medium text-base text-(--secondary-text)/75">
-                        { shipment.deliveryAt.split('-')[2] } { ar_months[shipment.deliveryAt.split('-')[1] as keyof typeof ar_months] }
+                        { dayjs(shipment.deliveryAt).format("DD MMM") }
                     </h5>
                 </div>
             </div>
@@ -70,13 +69,13 @@ function ShipmentCard({ shipment }: { shipment: Shipment }) {
                 <Link to={{ pathname: `/shipments/${shipment.id}` }}>
                     <button className="h-12 px-5 flex items-center gap-2 rounded-20 bg-(--primary-color) text-(--secondary-color) duration-300 hover:scale-95 cursor-pointer">
                         <span className="font-main font-light text-base capitalize">
-                            اعرض سعرك
+                            عرض المزيد
                         </span>
                     </button>
                 </Link>
-                <button className="w-12 h-12 flex items-center justify-center rounded-full border border-(--primary-color) text-(--primary-color) duration-300 hover:scale-95 hover:bg-(--primary-color) hover:text-(--secondary-color) cursor-pointer">
+                {/* <button className="w-12 h-12 flex items-center justify-center rounded-full border border-(--primary-color) text-(--primary-color) duration-300 hover:scale-95 hover:bg-(--primary-color) hover:text-(--secondary-color) cursor-pointer">
                     <PiMapPinArea className="text-2xl"/>
-                </button>
+                </button> */}
             </div>
         </div>
     )

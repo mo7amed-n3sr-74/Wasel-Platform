@@ -1,7 +1,7 @@
 import { offerService } from "@/api/services/offer.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export function useAcceptOffer({ offerId }: { offerId: string }) {
+export function useAcceptOffer(offerId: string) {
     const queryClient = useQueryClient();
 
     return (
@@ -10,7 +10,7 @@ export function useAcceptOffer({ offerId }: { offerId: string }) {
             mutationFn: () => (offerService.acceptOffer(offerId)),
 
             onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ["allOffers"] })
+                queryClient.invalidateQueries({ queryKey: ["shipmentOffers"] })
             }
         })
     )

@@ -50,7 +50,7 @@ class PrivateHttpClient {
             })
         }
 
-        return this.refreshAccessToken;
+        return this.refreshPromise;
     }
 
     private setupInterceptors() {

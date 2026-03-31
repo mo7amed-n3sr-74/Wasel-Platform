@@ -103,7 +103,7 @@ export class ShipmentsService {
             picture: true
           }
         },
-        shipment: true
+        shipment: true,
       }
     });
 

@@ -44,7 +44,7 @@ async function refreshAccessToken() {
         })
     }
 
-    return refreshAccessToken;
+    return refreshPromise;
 }
 
 const api = axios.create({

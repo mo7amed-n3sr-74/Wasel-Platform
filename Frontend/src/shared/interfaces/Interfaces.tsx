@@ -15,8 +15,8 @@ export interface Shipment {
     height: number,
     width: number
     stacking?: boolean,
-    pickupAt: string,
-    deliveryAt: string,
+    pickupAt: Date | undefined,
+    deliveryAt: Date | undefined,
     description: string,
 
     urgent?: boolean,
@@ -39,6 +39,62 @@ export interface Shipment {
         first_name: string,
         last_name: string
     }
+
+    acceptedOffer: {
+        id: string,
+        price: number,
+        proposal: string,
+        status: string,
+        createdAt: Date,
+        updatedAt: Date,
+        profile: {
+            username: string,
+            first_name: string | null,
+            last_name: string | null,
+            role: string
+        }
+    }
+}
+
+export interface Offer {
+	id: string;
+	price: number;
+	proposal: string;
+	status: "PENDING" | "IN_PROGRESS" | "IN_TRANSIT" | "DELAYED" | "DELIVERED" | "CANCELLED";
+	createdAt: string;
+	profileId: string;
+	profile: {
+		username: string;
+		first_name: string | null;
+		last_name: string | null;
+		picture: string;
+	};
+	shipment: {
+		id: string;
+		shipmentId: string;
+		origin: string;
+		destination: string;
+		shipmentType: string;
+		weight: number;
+		length: number;
+		width: number;
+		height: number;
+		packaging: string;
+		goodsType: string;
+		description: string;
+		status: string;
+		pickupAt: string;
+		deliveryAt: string;
+		urgent: boolean;
+		budgetType: string;
+		paymentType: string;
+		offerCount: number;
+        acceptedBy?: {
+            first_name: string,
+            last_name: string,
+            price: string
+        }
+	};
 }
 
 export interface Attachment {
@@ -84,4 +140,5 @@ export interface ShipmentAttachment {
     createdAt: string,
     updatedAt: string
 }
+
 

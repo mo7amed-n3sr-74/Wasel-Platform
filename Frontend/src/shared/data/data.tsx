@@ -4,7 +4,11 @@ import {
     PiWarning,
     PiDrop,
     PiTractor,
-    PiCar
+    PiCar,
+    PiHouse,
+    PiShippingContainer,
+    PiTicket,
+    PiGear
 } from "react-icons/pi";
 
 export const ar_months = {
@@ -90,3 +94,48 @@ export const newShipmentSections = [
         path: ""
     },
 ]
+
+export const packagingItems = [
+    "كرتون",
+    "بالتات",
+    "صناديق خشب",
+    "أكياس",
+    "براميل",
+    "رولات",
+    "كراتين ملفوفة بشرنك",
+    "أكياس نيلون ملفوفة",
+    "عبوات زجاجية",
+    "صناديق بلاستيك",
+    "صناديق معدنية"<
+    "أكياس كبيرة",
+    "صفائح",
+    "بدون تغليف",
+]
+
+// Dashboard
+export const sidebarItems = [
+    {
+        name: "الرئيسية",
+        icon: PiHouse,
+        path: "/dashboard",
+        hasAccess: ["admin", "manufacturer", "carrier_company", "independent_carrier"],
+    },
+    {
+        name: "الحمولات",
+        icon: PiShippingContainer,
+        path: "shipments",
+        hasAccess: ["admin", "manufacturer", "carrier_company", "independent_carrier"]
+    },
+    {
+        name: "العروض",
+        icon: PiTicket,
+        path: "offers",
+        hasAccess: ["admin", ""]
+    },
+    {
+        name: "الإعدادت",
+        icon: PiGear,
+        path: "",
+        hasAccess: ["admin", ""]
+    },
+];

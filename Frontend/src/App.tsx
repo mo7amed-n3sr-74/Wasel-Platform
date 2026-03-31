@@ -24,6 +24,8 @@ import OneTimePassword from "./pages/auth/OneTimePassword";
 import Shipment from "./pages/Shipment";
 import DashLayout from "./pages/dashboard/DashLayout";
 import DashHome from "./pages/dashboard/DashHome";
+import DashShipments from "./pages/dashboard/DashShipments";
+import DashShipmentOffers from "./pages/dashboard/DashShipmentOffers";
 import HasAccess from "./components/HasAccess";
 import { useRefresh } from "./api/hooks/auth/useRefresh";
 import { useMe } from "./api/hooks/auth/useMe";
@@ -37,15 +39,15 @@ function App() {
 		mutate: refresh,
 		isError: isRefreshError,
 		error: refreshError,
-		isSuccess: isRefreshSuccess
+		isSuccess: isRefreshSuccess,
 	} = useRefresh();
 	const {
 		data: user,
 		mutate: currentUser,
 		isError: isUserError,
 		error: userError,
-		isSuccess: isUserSuccess
-	} = useMe()
+		isSuccess: isUserSuccess,
+	} = useMe();
 
 	useEffect(() => {
 		i18n.changeLanguage("ar");
@@ -72,29 +74,25 @@ function App() {
 		}
 
 		if (isRefreshError) {
-			const axiosMsg = isAxiosError(refreshError)? refreshError.response?.data?.message : "حدث خطأ ما";
+			const axiosMsg = isAxiosError(refreshError)
+				? refreshError.response?.data?.message
+				: "حدث خطأ ما";
 
-			addNotification(
-				t(axiosMsg),
-				"error",
-				5000
-			)
+			addNotification(t(axiosMsg), "error", 5000);
 		}
 	}, [isRefreshSuccess, isRefreshError, refreshError]);
 
 	useEffect(() => {
-		if (isUserSuccess) {			
-			setUser(user.data)
+		if (isUserSuccess) {
+			setUser(user.data);
 		}
 
 		if (isUserError) {
-			const axiosMsg = isAxiosError(userError)? userError.response?.data?.message : "حدث خطأ ما";
+			const axiosMsg = isAxiosError(userError)
+				? userError.response?.data?.message
+				: "حدث خطأ ما";
 
-			addNotification(
-				t(axiosMsg),
-				"error",
-				5000
-			)
+			addNotification(t(axiosMsg), "error", 5000);
 		}
 	}, [isUserSuccess, isUserError, userError]);
 
@@ -140,20 +138,39 @@ function App() {
 					<Route
 						path="/shipments"
 						element={<Shipments />}
-					>
-					</Route>
-						<Route path="/shipments/:id" element={<Shipment />}></Route>
+					></Route>
+					<Route
+						path="/shipments/:id"
+						element={<Shipment />}
+					></Route>
 					{/* Dashoard */}
 					<Route
 						path="/dashboard"
 						element={
-							<HasAccess role={["admin", "manufacturer", "carrier_company", "independent_carrier"]}>
-								<DashLayout>
-									<DashHome />
-								</DashLayout>
+							<HasAccess
+								role={[
+									"admin",
+									"manufacturer",
+									"carrier_company",
+									"independent_carrier",
+								]}
+							>
+								<DashLayout />
 							</HasAccess>
 						}
-					/>
+					>
+						<Route index element={<DashHome />} />
+						<Route
+							path="shipments"
+							element={<DashShipments />}
+						/>
+						<Route
+							path="shipments/:shipmentId"
+							element={<DashShipmentOffers />}
+						/>
+						{/* <Route path="analytics" element={<DashAnalytics />} />
+						<Route path="settings" element={<DashSettings />} /> */}
+					</Route>
 					{/* Default */}
 					<Route path="*" element={<NotFound />} />
 				</Routes>

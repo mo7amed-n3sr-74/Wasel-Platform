@@ -28,13 +28,28 @@ export class UserService {
         username,
       },
       select: {
-        shipments: true,
+        shipments: {
+          include: {
+            acceptedOffer: {
+              include: {
+                profile: {
+                  select: {
+                    username: true,
+                    first_name: true,
+                    last_name: true,
+                    role: true
+                  }
+                }
+              }
+            }
+          }
+        },
       },
     });
 
     const { shipments } = profile;
     if (shipments.length === 0) {
-      throw new HttpException('Shipments not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('No shipments found', HttpStatus.NO_CONTENT);
     }
 
     return shipments;
