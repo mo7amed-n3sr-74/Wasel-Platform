@@ -106,7 +106,7 @@ function NewShipment() {
 	useEffect(() => {
 		if (isSuccess) {
 			addNotification(t(data.data?.message), "success", 5000);
-			setNewShipment(newShipmentObject);
+			setNewShipment(newShipmentObject);			
 		}
 
 		if (isError) {
@@ -226,8 +226,7 @@ function NewShipment() {
 		e: FormEvent<HTMLFormElement | HTMLInputElement>,
 	) => {
 		e.preventDefault();
-		console.log(newShipment);
-		// return;
+
 		if (shipmentImgs.length < 3) {
 			addNotification("لا يمكنك رفع أقل من 3 صور", "warning", 5000);
 			return;
@@ -247,16 +246,27 @@ function NewShipment() {
 			formData.append("shipmentDocs", shipmentDoc);
 		}
 
-		for (const value of Object.values(newShipmentObject)) {
-			if (typeof value !== "boolean" && !value) {
-				addNotification(
-					`من فضلك أدخل تفاصيل الحمولة كاملة أولاً`,
-					"warning",
-					5000,
-				);
-				return;
-			}
+		const validDate = dayjs(newShipment.deliveryAt).diff(newShipment.pickupAt, "days")  > 1? true : false;
+		if(!validDate) {
+			addNotification(
+				`تاريخ غير صالح`,
+				"warning",
+				5000,
+			);
+			return;
 		}
+
+		// for (const value of Object.values(newShipmentObject)) {
+		// 	if (typeof value !== "boolean" && !value) {
+		// 		addNotification(
+		// 			`من فضلك أدخل تفاصيل الحمولة كاملة أولاً`,
+		// 			"warning",
+		// 			5000,
+		// 		);
+		// 		return;
+		// 	}
+		// }
+
 		formData.set("data", JSON.stringify(newShipment));
 
 		mutate(formData);

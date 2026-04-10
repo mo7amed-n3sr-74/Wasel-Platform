@@ -19,5 +19,6 @@
     "الرصيد": "balance",
     "ليس لديك صلاحية": "Unauthorized",
     "تم إرسال عرض وقيد انتظار الرد": "You've already sent your offer and PENDING",
-    "تم إرسال عرض بنجاح": "Your offer sent successfully"
+    "تم إرسال عرض بنجاح": "Your offer sent successfully",
+    "تم رفض العرض بالفعل": "Offer has been rejected"
 }   

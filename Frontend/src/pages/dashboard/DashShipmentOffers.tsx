@@ -81,7 +81,7 @@ export default function DashShipmentOffers() {
 		<section className="w-full h-full">
 			<DashHeader title={"تفاصيل الحمولة"} />
 			<div className="h-[calc(100%-52px)] overflow-y-auto scrollbar-hidden">
-				<div className="max-w-7xl mx-auto space-y-6">
+				<div className="w-full mx-auto space-y-6">
 					{/* Shipment Details Card */}
 					<div className="bg-(--secondary-color) border border-(--tertiary-color) rounded-xl p-6">
 						<div className="flex items-center justify-between gap-2 mb-6">

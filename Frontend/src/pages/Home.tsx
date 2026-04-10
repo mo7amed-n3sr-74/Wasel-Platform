@@ -35,7 +35,7 @@ function Home() {
 			<section className="pt-26 min-h-screen lg:h-screen">
 					<div className="relative w-full h-full container mx-auto px-4 sm:px-0 flex flex-col-reverse lg:flex-row items-center justify-between gap-10 lg:gap-0">
 						<div className="w-1/2 flex flex-col">
-							<h1 className="w-4/5 font-main xl:text-7xl lg:text-6xl md:text-5xl font-extrabold text-(--primary-text) capitalize xl:leading-24 lg:leading-18 md:leading-16 mb-4">
+							<h1 className="w-4/5 font-main xxl:text-8xl xl:text-7xl lg:text-6xl md:text-5xl font-extrabold text-(--primary-text) capitalize xxl:leading-30 xl:leading-24 lg:leading-18 md:leading-16 mb-4">
 								وصل <span className="text-(--primary-color)">حمولتك</span> بأمان وسرعة
 							</h1>
 							<h2 className="xl:w-3/4 lg:w-4/5 font-main font-medium xl:text-xl lg:text-lg md:text-base text-(--secondary-text) xl:leading-9 lg:leading-8 md:leading-7 xl:mb-12 lg:mb-10 md:mb-8">

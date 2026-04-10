@@ -26,10 +26,11 @@ export class OffersService {
     const userId = req.user.sub as string;
     const role = req.user.role as string;
 
-    console.log("Role: " + role); 
-
     if (role == "ADMIN") {
       const recentTenOffers = await this.prisma.offer.findMany({
+        where: {
+          status: "PENDING"
+        },    
         orderBy: {
           createdAt:  "desc"
         },
@@ -41,7 +42,10 @@ export class OffersService {
 
     if (role === "MANUFACTURER") {
       const recentTenOffers = await this.prisma.offer.findMany({
-        where: {  
+        where: { 
+          status: {
+            in: ["PENDING"]
+          },
           shipment: {
             profile: {
               userId
@@ -62,6 +66,7 @@ export class OffersService {
               last_name: true,
               picture: true,
               username: true,
+              company_name: true,
             }
           },
           shipment: {
@@ -70,6 +75,8 @@ export class OffersService {
               destination: true,
               distance: true,
               ETA: true,
+              id: true,
+              shipmentId: true,
               profile: {
                 select: {
                   id: true,
@@ -77,6 +84,7 @@ export class OffersService {
                   last_name: true,
                   picture: true,
                   username: true,
+                  // company_name: true,
                 }
               },
             }
@@ -239,6 +247,18 @@ export class OffersService {
 
   async rejectOffer(offerId: string): Promise<Offer> {
 
+    // Check if offer is rejected
+    const offerRejected = await this.prisma.offer.findUnique({
+      where: {
+        id: offerId,
+        status: "REJECTED"
+      }
+    })
+
+    if (offerRejected) {
+      throw new HttpException('Offer has been rejected', HttpStatus.BAD_REQUEST);
+    }
+
     const updatedOffer = await this.prisma.offer.update({
       where: {
         id: offerId,
@@ -249,9 +269,8 @@ export class OffersService {
       }
     });
     
-
     if (!updatedOffer)
-      throw new HttpException("Failed to update shipment offer", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException("Failed to update shipment offer", HttpStatus.INTERNAL_SERVER_ERROR );
 
     return updatedOffer;
   }

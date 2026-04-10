@@ -1,61 +1,60 @@
 import { Button } from "@/components/ui/button";
 import { PiStar, PiCheckCircle, PiXCircle, PiChatDots } from "react-icons/pi";
+import { useRecentOffer } from "@/api/hooks/offers/useRecentOffer";
+import { Link } from "react-router-dom";
+import { useAcceptOffer } from "@/api/hooks/offers/useAcceptOffer";
+import { useRejectOffer } from "@/api/hooks/offers/useRejectOffer";
+import { useTranslation } from "react-i18next";
+import { Spinner } from "@/components/ui/spinner";
+import { useEffect, useState } from "react";
+import { useNotification } from "@/components/NotificationContext";
+import { isAxiosError } from "axios";
 
-interface Offer {
-	id: string;
-	companyName: string;
-	rating: number;
-	reviewsCount: number;
-	price: number;
-	eta: string;
-	shipmentId: string;
-	isBestOffer: boolean;
-}
-
-const mockOffers: Offer[] = [
-	{
-		id: "OF-001",
-		companyName: "شركة النقل السريع",
-		rating: 4.8,
-		reviewsCount: 245,
-		price: 450,
-		eta: "2 ساعة",
-		shipmentId: "SH-001",
-		isBestOffer: true,
-	},
-	{
-		id: "OF-002",
-		companyName: "خدمات النقل المتقدمة",
-		rating: 4.5,
-		reviewsCount: 182,
-		price: 520,
-		eta: "3 ساعات",
-		shipmentId: "SH-001",
-		isBestOffer: false,
-	},
-	{
-		id: "OF-003",
-		companyName: "النقل الموثوق",
-		rating: 4.9,
-		reviewsCount: 312,
-		price: 650,
-		eta: "1.5 ساعة",
-		shipmentId: "SH-002",
-		isBestOffer: true,
-	},
-	{
-		id: "OF-004",
-		companyName: "سائق مستقل - أحمد",
-		rating: 4.2,
-		reviewsCount: 87,
-		price: 380,
-		eta: "4 ساعات",
-		shipmentId: "SH-004",
-		isBestOffer: false,
-	},
-];
 
 function RecentOffers() {
+	const [ offerId, setOfferId ] = useState<string>();
+	const { t } = useTranslation();
+	const { addNotification } = useNotification();
+	const { data } = useRecentOffer();
+	const recentOffers = data?.data;
+
+	const { data: acceptedOffer, mutate: acceptOffer, isPending: isAcceptPending, isSuccess: isAcceptSuccess, isError: isAcceptError, error: acceptError } = useAcceptOffer(offerId);
+	const { data: rejectedOffer, mutate: rejectOffer, isPending: isRejectPending, isSuccess: isRejectSuccess, isError: isRejectError, error: rejectError } = useRejectOffer(offerId);
+	
+	const handleAcceptOffer = (offerId: string) => {
+		console.log(offerId + " - Accept");
+	}
+
+	const handleRejectOffer = (offerId: string) => {
+		if (!offerId) return;
+		setOfferId(offerId);
+		rejectOffer();
+	}
+
+	useEffect(() => {
+		if (isRejectError) {
+			const axiosMsg = isAxiosError(rejectError)? rejectError.response?.data.message : "حدث خطأ ما";
+			addNotification(
+				t(axiosMsg),
+				"error",
+				5000
+			);
+			setOfferId("");
+		}
+
+
+		if (isRejectSuccess) {
+			addNotification(
+				t("تم رفض العرض بنجاح"),
+				"success",
+				5000
+			);
+			setOfferId("");
+		}
+	}, [
+		isAcceptSuccess, isRejectSuccess, isAcceptError, isRejectError
+	])
+
 	const renderStars = (rating: number) => {
 		return (
 			<div className="flex items-center gap-1">
@@ -80,11 +79,11 @@ function RecentOffers() {
 					آخر العروض المستلمة
 				</h2>
 				<span className="text-sm font-main text-(--tertiary-color)">
-					{mockOffers.length} عرض
+					{recentOffers?.length} عرض
 				</span>
 			</div>
 
-			{mockOffers.length === 0 ? (
+			{recentOffers?.length === 0 ? (
 				<div className="py-12 flex flex-col items-center justify-center">
 					<div className="w-16 h-16 rounded-full bg-(--primary-color)/10 flex items-center justify-center mb-4">
 						<PiChatDots className="text-3xl text-(--primary-color)" />
@@ -95,42 +94,38 @@ function RecentOffers() {
 				</div>
 			) : (
 				<div className="space-y-3 max-h-96 overflow-y-auto scrollbar-hidden">
-					{mockOffers.map((offer) => (
+					{recentOffers?.map((offer) => (
 						<div
 							key={offer.id}
-							className={`p-4 rounded-15 border transition-all ${
-								offer.isBestOffer
-									? "bg-(--primary-color)/5 border-(--primary-color)/30"
-									: "bg-(--secondary-color) border-(--tertiary-color)/20 hover:border-(--primary-color)/20"
-							}`}
+							className={`p-4 rounded-10 border transition-all border border-(--primary-color)/25 bg-(--primary-color)/4`}
 						>
 							<div className="flex flex-col items-start justify-between gap-4">
 								<div className="flex-1 min-w-0">
 									<div className="flex items-center gap-2 mb-2">
 										<h3 className="font-main font-bold text-(--primary-text) truncate">
 											{
-												offer.companyName
-											}
+												offer.profile.company_name? offer.profile.company_name : "غير معروف"
+											}	
 										</h3>
-										{offer.isBestOffer && (
+										{/* {offer.isBestOffer && (
 											<span className="text-xs font-main px-2 py-1 bg-(--primary-color) text-(--secondary-color) rounded-full whitespace-nowrap">
 												أفضل عرض
 											</span>
-										)}
+										)} */}
 									</div>
 
 									<div className="flex items-center gap-2 mb-3">
-										{renderStars(
+										{/* {renderStars(
 											offer.rating,
-										)}
-										<span className="text-sm font-main text-(--tertiary-color)">
+										)} */}
+										{/* <span className="text-sm font-main text-(--tertiary-color)">
 											{offer.rating}{" "}
 											(
 											{
 												offer.reviewsCount
 											}
 											)
-										</span>
+										</span> */}
 									</div>
 
 									<div className="grid grid-cols-3 gap-3 text-sm">
@@ -141,8 +136,7 @@ function RecentOffers() {
 											<p className="font-main font-bold text-(--primary-color) text-base">
 												{
 													offer.price
-												}{" "}
-												ر.س
+												}
 											</p>
 										</div>
 										<div>
@@ -152,7 +146,7 @@ function RecentOffers() {
 											</p>
 											<p className="font-main font-bold text-(--primary-text)">
 												{
-													offer.eta
+													offer.shipment.ETA
 												}
 											</p>
 										</div>
@@ -160,11 +154,13 @@ function RecentOffers() {
 											<p className="font-main text-(--tertiary-color) text-xs mb-1">
 												الشحنة
 											</p>
-											<p className="font-main font-bold text-(--primary-text)">
-												{
-													offer.shipmentId
-												}
-											</p>
+											<Link to={`/dashboard/shipments/${offer.shipment.id}`}>
+												<p className="font-main font-bold text-(--primary-text) hover:text-(--primary-color) underline">
+													{
+														offer.shipment.shipmentId
+													}
+												</p>
+											</Link>
 										</div>
 									</div>
 								</div>
@@ -173,26 +169,38 @@ function RecentOffers() {
 									<Button
 										size="sm"
 										className="h-9 px-3 rounded-8 bg-(--primary-color) hover:bg-(--primary-color)/80 whitespace-nowrap text-sm"
+										onClick={() => handleAcceptOffer(offer.id)}
+										disabled={isAcceptPending}
 									>
-										<PiCheckCircle className="text-lg" />
-										قبول
+										{
+											!isAcceptPending?
+												<>
+													<PiCheckCircle className="text-lg" />
+													قبول
+												</>
+											:
+												<Spinner />
+
+										}
 									</Button>
 									<Button
 										size="sm"
 										variant="outline"
 										className="h-9 px-3 rounded-8 whitespace-nowrap text-sm"
+										onClick={() => handleRejectOffer(offer.id)}
+										disabled={isRejectPending}
 									>
-										<PiXCircle className="text-lg" />
-										رفض
+										{
+											!isRejectPending?
+												<>
+													<PiXCircle className="text-lg" />
+													رفض
+												</>
+											:
+												<Spinner />
+
+										}
 									</Button>
-									{/* <Button
-										size="sm"
-										variant="outline"
-										className="h-9 px-3 rounded-8 whitespace-nowrap text-sm"
-									>
-										<PiChatDots className="text-lg" />
-										دردشة
-									</Button> */}
 								</div>
 							</div>
 						</div>

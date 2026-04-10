@@ -9,6 +9,10 @@ class OfferService {
 		return privateHttpClient.get(`/offers`);
 	}
 
+	getRecentOffers() {
+		return privateHttpClient.get("/offers/recent");
+	}
+
 	sendOffer(
 		shipmentId: string | undefined,
 		data: { price: number; proposal: string },

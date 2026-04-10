@@ -28,5 +28,6 @@
     "Pick a deliver date": "إختار تاريخ الوصول",
     "balance": "الرصيد",
     "You've already sent your offer and PENDING": "تم إرسال عرض وقيد انتظار الرد",
-    "Your offer sent successfully": "تم إرسال عرض بنجاح"
+    "Your offer sent successfully": "تم إرسال عرض بنجاح",
+    "Offer has been rejected": "تم رفض العرض بالفعل"
 }

@@ -194,7 +194,7 @@ export function ShipmentsDataTable({
 			header: "الميزانية",
 			cell: ({ row }: CellContext<Shipment, unknown>) => (
 				<span className="font-main font-medium text-(--primary-color)">
-					{row.getValue("suggestedBudget") + " ج.م"}
+					{row.getValue("suggestedBudget") ? row.getValue("suggestedBudget") + " ج.م" : "—"}
 				</span>
 			),
 		},

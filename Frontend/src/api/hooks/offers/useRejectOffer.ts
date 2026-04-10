@@ -11,6 +11,7 @@ export function useRejectOffer(offerId: string)  {
 
             onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ["shipmentOffers"] })
+                queryClient.invalidateQueries({ queryKey: ["recentOffer"] })
             }
         })
     )

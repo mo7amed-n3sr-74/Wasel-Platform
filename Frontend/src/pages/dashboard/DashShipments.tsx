@@ -32,7 +32,7 @@ function DashShipments() {
 	return (
 		<section className="w-full h-full">
             <DashHeader title={"حمولاتي"} />
-			<div className="h-[calc(100%-52px)] max-w-7xl mx-auto">
+			<div className="h-[calc(100%-52px)] w-full mx-auto">
                 {
                     response && (
                         <ShipmentsDataTable
