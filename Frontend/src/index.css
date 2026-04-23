@@ -47,6 +47,7 @@
 
 body {
 	background-color: var(--bg-color);
+	font-family: var(--font-main);
 }
 
 .review-card {

@@ -47,6 +47,7 @@ function ActiveShipments() {
 
 	const { data } = useShipments();
 	const shipments: Shipment[] | [] = data?.data.shipments || [];
+	console.log(shipments)
 
 	return (
 		<div className="w-full h-full flex flex-col bg-(--secondary-color) rounded-20 p-6 border border-(--tertiary-color)/20">
@@ -87,6 +88,9 @@ function ActiveShipments() {
 								</TableHead>
 								<TableHead className="font-main font-bold text-(--primary-text) text-right">
 									أفضل سعر
+								</TableHead>
+								<TableHead className="font-main font-bold text-(--primary-text) text-right">
+									وقت الحمولة
 								</TableHead>
 								<TableHead className="font-main font-bold text-(--primary-text) text-right">
 									الإجراءات
@@ -135,7 +139,7 @@ function ActiveShipments() {
 										</TableCell>
 										<TableCell className="text-center font-main text-(--primary-text) font-medium">
 											{
-												shipment.offersCount
+												shipment.offerCount || 0
 											}
 										</TableCell>
 										<TableCell className="text-right font-main font-bold text-(--primary-color)">
@@ -144,8 +148,13 @@ function ActiveShipments() {
 											}{" "}
 											ر.س
 										</TableCell>
+										<TableCell className="text-right font-main font-bold text-(--primary-color)">
+											{
+												shipment.ETA
+											}
+										</TableCell>
 										<TableCell className="text-right">
-											<div className="flex items-center justify-end gap-2">
+											<div className="flex items-center justify-start gap-2">
 												<Link to={{ pathname: `/dashboard/shipments/${shipment.id}` }}>
 													<Button
 														size="sm"

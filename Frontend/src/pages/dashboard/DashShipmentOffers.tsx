@@ -68,7 +68,7 @@ export default function DashShipmentOffers() {
 				<DashHeader title={"تفاصيل الحمولة"} />
 				<div className="h-[calc(100%-52px)] flex items-center justify-center">
 					<div className="text-center">
-						<p className="font-main text-lg text-(--secondary-text)">
+						<p className="text-lg text-(--secondary-text)">
 							لم يتم العثور على الحمولة
 						</p>
 					</div>
@@ -86,7 +86,7 @@ export default function DashShipmentOffers() {
 					<div className="bg-(--secondary-color) border border-(--tertiary-color) rounded-xl p-6">
 						<div className="flex items-center justify-between gap-2 mb-6">
 							{/* <PiTruck className="text-2xl text-(--primary-color)" /> */}
-							<h2 className="font-main text-2xl font-bold text-(--primary-text)">
+							<h2 className="text-2xl font-bold text-(--primary-text)">
 								{shipment.shipmentId}
 							</h2>
 							<Link to={{ pathname: `/dashboard/shipments/${shipment.id}/edit` }}>
@@ -104,11 +104,11 @@ export default function DashShipmentOffers() {
 							<div className="space-y-2">
 								<div className="flex items-center gap-1 text-(--secondary-text)">
 									<PiMapPin className="text-lg" />
-									<p className="font-main text-sm">
+									<p className="text-sm">
 										الانطلاق
 									</p>
 								</div>
-								<p className="font-main font-semibold text-(--primary-text)">
+								<p className="font-semibold text-(--primary-text)">
 									{shipment.origin}
 								</p>
 							</div>
@@ -117,41 +117,41 @@ export default function DashShipmentOffers() {
 							<div className="space-y-2">
 								<div className="flex items-center gap-1 text-(--secondary-text)">
 									<PiMapPin className="text-lg" />
-									<p className="font-main text-sm">
+									<p className="text-sm">
 										الوصول
 									</p>
 								</div>
-								<p className="font-main font-semibold text-(--primary-text)">
+								<p className="font-semibold text-(--primary-text)">
 									{shipment.destination}
 								</p>
 							</div>
 
 							{/* Shipment Type */}
 							<div className="space-y-2">
-								<p className="font-main text-sm text-(--secondary-text)">
+								<p className="text-sm text-(--secondary-text)">
 									نوع الحمولة
 								</p>
-								<p className="font-main font-semibold text-(--primary-text)">
+								<p className="font-semibold text-(--primary-text)">
 									{shipment.shipmentType}
 								</p>
 							</div>
 
 							{/* Weight */}
 							<div className="space-y-2">
-								<p className="font-main text-sm text-(--secondary-text)">
+								<p className="text-sm text-(--secondary-text)">
 									الوزن
 								</p>
-								<p className="font-main font-semibold text-(--primary-text)">
+								<p className="font-semibold text-(--primary-text)">
 									{shipment.weight} طن
 								</p>
 							</div>
 
 							{/* Dimensions */}
 							<div className="space-y-2">
-								<p className="font-main text-sm text-(--secondary-text)">
+								<p className="text-sm text-(--secondary-text)">
 									الأبعاد
 								</p>
-								<p className="font-main font-semibold text-(--primary-text) text-sm">
+								<p className="font-semibold text-(--primary-text) text-sm">
 									{shipment.length} ×{" "}
 									{shipment.width} ×{" "}
 									{shipment.height} سم
@@ -160,20 +160,20 @@ export default function DashShipmentOffers() {
 
 							{/* Packaging */}
 							<div className="space-y-2">
-								<p className="font-main text-sm text-(--secondary-text)">
+								<p className="text-sm text-(--secondary-text)">
 									التغليف
 								</p>
-								<p className="font-main font-semibold text-(--primary-text) text-sm">
+								<p className="font-semibold text-(--primary-text) text-sm">
 									{shipment.packaging}
 								</p>
 							</div>
 
 							{/* Pickup Date */}
 							<div className="space-y-2">
-								<p className="font-main text-sm text-(--secondary-text)">
+								<p className="text-sm text-(--secondary-text)">
 									تاريخ الانطلاق
 								</p>
-								<p className="font-main font-semibold text-(--primary-text)">
+								<p className="font-semibold text-(--primary-text)">
 									{dayjs(
 										shipment.pickupAt,
 									).format("DD MMM YYYY")}
@@ -182,10 +182,10 @@ export default function DashShipmentOffers() {
 
 							{/* Delivery Date */}
 							<div className="space-y-2">
-								<p className="font-main text-sm text-(--secondary-text)">
+								<p className="text-sm text-(--secondary-text)">
 									تاريخ الوصول
 								</p>
-								<p className="font-main font-semibold text-(--primary-text)">
+								<p className="font-semibold text-(--primary-text)">
 									{dayjs(
 										shipment.deliveryAt,
 									).format("DD MMM YYYY")}
@@ -194,10 +194,10 @@ export default function DashShipmentOffers() {
 
 							{/* Budget Type */}
 							<div className="space-y-2">
-								<p className="font-main text-sm text-(--secondary-text)">
+								<p className="text-sm text-(--secondary-text)">
 									نوع الميزانية
 								</p>
-								<span className="inline-block font-main text-xs font-semibold px-2.5 py-0.5 bg-(--tertiary-color)/20 text-(--tertiary-color) rounded-lg">
+								<span className="inline-block text-xs font-semibold px-2.5 py-0.5 bg-(--tertiary-color)/20 text-(--tertiary-color) rounded-lg">
 									{shipment.budgetType ===
 									"OPEN_BUDGET"
 										? "ميزانية مفتوحة"
@@ -205,26 +205,40 @@ export default function DashShipmentOffers() {
 								</span>
 							</div>
 
+							{/* Budget */}
+							{
+								shipment.budgetType === "LIMITED_BUDGET" && (
+									<div className="space-y-2">
+										<p className="text-sm text-(--secondary-text)">
+											الميزانية
+										</p>
+										<p className="font-semibold text-(--primary-color) text-sm">
+											{shipment.suggestedBudget}
+										</p>
+									</div>
+								)
+							}
+
 							{/* Payment Type */}
 							<div className="space-y-2">
-								<p className="font-main text-sm text-(--secondary-text)">
+								<p className="text-sm text-(--secondary-text)">
 									نوع الدفع
 								</p>
-								<p className="font-main font-semibold text-(--primary-text) text-sm">
+								<p className="font-semibold text-(--primary-text) text-sm">
 									{shipment.paymentType ===
 									"ON_DELIVER"
 										? "عند التسليم"
-										: "عند الانطلاق"}
+										: "تحويل بنكي"}
 								</p>
 							</div>
 
 							{/* Urgent */}
 							{shipment.urgent && (
 								<div className="space-y-2">
-									<p className="font-main text-sm text-(--secondary-text)">
+									<p className="text-sm text-(--secondary-text)">
 										الأولوية
 									</p>
-									<span className="inline-block font-main text-xs font-semibold px-2.5 py-0.5 bg-red-100 text-red-800 rounded-lg">
+									<span className="inline-block text-xs font-semibold px-2.5 py-0.5 bg-red-100 text-red-800 rounded-lg">
 										عاجل
 									</span>
 								</div>
@@ -232,21 +246,21 @@ export default function DashShipmentOffers() {
 
 							{/* Offer Count */}
 							<div className="space-y-2">
-								<p className="font-main text-sm text-(--secondary-text)">
+								<p className="text-sm text-(--secondary-text)">
 									عدد العروض
 								</p>
-								<p className="font-main font-semibold text-(--primary-color) text-lg">
+								<p className="font-semibold text-(--primary-color) text-lg">
 									{shipment.offerCount}
 								</p>
 							</div>
 
 							{/* Offer Count */}
 							<div className="space-y-2">
-								<p className="font-main text-sm text-(--secondary-text)">
+								<p className="text-sm text-(--secondary-text)">
 									الناقل
 								</p>
-								<p className="font-main font-semibold text-(--primary-color) text-lg">
-									{/* {offer. && shipment.acceptedBy.first_name + " " + shipment.acceptedBy.last_name} */}
+								<p className="font-semibold text-(--primary-text) text-sm">
+									{ shipment.acceptedOffer && shipment.acceptedOffer.profile.first_name + " " + shipment.acceptedOffer.profile.last_name}
 								</p>
 							</div>
 						</div>
@@ -254,18 +268,18 @@ export default function DashShipmentOffers() {
 						{/* Description and Goods Type */}
 						<div className="mt-6 pt-6 border-t border-(--tertiary-color)/30 space-y-4">
 							<div>
-								<p className="font-main text-sm text-(--secondary-text) mb-2">
+								<p className="text-sm text-(--secondary-text) mb-2">
 									نوع البضاعة
 								</p>
-								<p className="font-main text-(--primary-text)">
+								<p className="text-(--primary-text)">
 									{shipment.goodsType}
 								</p>
 							</div>
 							<div>
-								<p className="font-main text-sm text-(--secondary-text) mb-2">
+								<p className="text-sm text-(--secondary-text) mb-2">
 									الوصف
 								</p>
-								<p className="font-main text-(--primary-text)">
+								<p className="text-(--primary-text)">
 									{shipment.description}
 								</p>
 							</div>
@@ -274,13 +288,13 @@ export default function DashShipmentOffers() {
 
 					{/* Offers Section */}
 					<div className="space-y-4">
-						<h3 className="font-main text-xl font-bold text-(--primary-text)">
+						<h3 className="text-xl font-bold text-(--primary-text)">
 							العروض ({offers.length})
 						</h3>
 
 						{offers.length === 0 ? (
 							<div className="bg-(--secondary-color) border border-(--tertiary-color) rounded-xl p-8 text-center">
-								<p className="font-main text-(--secondary-text)">
+								<p className="text-(--secondary-text)">
 									لا توجد عروض حتى الآن
 								</p>
 							</div>
@@ -432,16 +446,16 @@ function OfferCard({ offer }: OfferCardProps) {
                         className="w-14 h-14 rounded-full object-cover border border-(--primary-color)"
                     />
                     <div>
-                        <h4 className="font-main font-semibold text-(--primary-text)">
+                        <h4 className="font-semibold text-(--primary-text)">
                             {offer.profile.first_name ||
                             offer.profile.last_name
                                 ? `${offer.profile.first_name || ""} ${offer.profile.last_name || ""}`.trim()
                                 : offer.profile.username}
                         </h4>
-                        {/* <p className="font-main text-sm text-(--secondary-text)">
+                        {/* <p className="text-sm text-(--secondary-text)">
                             @{offer.profile.username}
                         </p> */}
-                        <p className="font-main text-sm text-(--secondary-text) mt-1">
+                        <p className="text-sm text-(--secondary-text) mt-1">
                             {dayjs(offer.createdAt).format(
                                 "DD MMM YYYY",
                             )}
@@ -454,7 +468,7 @@ function OfferCard({ offer }: OfferCardProps) {
                     className={`flex items-start gap-2 px-3 py-1.5 ${statusInfo.bg} ${statusInfo.text} rounded-lg`}
                 >
                     {statusInfo.icon}
-                    <span className="font-main text-xs font-semibold">
+                    <span className="text-xs font-semibold">
                         {offer.status === "PENDING"
                             ? "قيد الانتظار"
                             : offer.status === "ACCEPTED"
@@ -467,20 +481,20 @@ function OfferCard({ offer }: OfferCardProps) {
 			{/* Offer Details */}
 			<div className="space-y-4">
 				<div className="flex items-center gap-2">
-					<p className="font-main text-sm text-(--secondary-text)">
+					<p className="text-sm text-(--secondary-text)">
 						السعر المقترح:
 					</p>
-					<p className="font-main text-2xl font-bold text-(--primary-color)">
+					<p className="text-2xl font-bold text-(--primary-color)">
 						{offer.price.toLocaleString("en-US")} ر.س
 					</p>
 				</div>
 
 				{offer.proposal && (
 					<div>
-						<p className="font-main text-sm text-(--secondary-text) mb-2">
+						<p className="text-sm text-(--secondary-text) mb-2">
 							الملاحظات
 						</p>
-						<p className="font-main text-(--primary-text) text-base">
+						<p className="text-(--primary-text) text-base">
 							{offer.proposal}
 						</p>
 					</div>
@@ -491,7 +505,7 @@ function OfferCard({ offer }: OfferCardProps) {
 					<div className="pt-4 flex gap-3">
 						<Button
 							type="button"
-							className="flex-1 font-main bg-(--primary-color) hover:bg-(--primary-color)/90 text-white"
+							className="flex-1 bg-(--primary-color) hover:bg-(--primary-color)/90 text-white"
 							onClick={() => handleAcceptOffer(offer.id)}
 							disabled={isAcceptPending}
 						>

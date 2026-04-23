@@ -132,7 +132,7 @@ export class OffersService {
   ): Promise<{
     status: HttpStatus;
     message: string;
-    newOffer: Offer;
+    newOffer: Offer;  
   }> {
 
     const shipment = await this.prisma.shipment.findUnique({

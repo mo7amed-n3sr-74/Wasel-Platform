@@ -31,6 +31,7 @@ import { useRefresh } from "./api/hooks/auth/useRefresh";
 import { useMe } from "./api/hooks/auth/useMe";
 import DashShipmentEdit from "./pages/dashboard/DashShipmentEdit";
 import { useSignout } from "./api/hooks/auth/useSignout";
+import DashOffers from "./pages/dashboard/DashOffers";
 
 function App() {
 	const { i18n, t } = useTranslation();
@@ -214,6 +215,10 @@ function App() {
 						<Route
 							path="shipments/:shipmentId/edit"
 							element={<DashShipmentEdit />}
+						/>
+						<Route
+							path="offers"
+							element={<DashOffers />}
 						/>
 						{/* <Route path="analytics" element={<DashAnalytics />} />
 						<Route path="settings" element={<DashSettings />} /> */}

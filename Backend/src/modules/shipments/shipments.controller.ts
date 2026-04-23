@@ -26,7 +26,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 export class ShipmentsController {
   constructor(private readonly shipmentsService: ShipmentsService) {}
 
-  @Get(':shipmentId/offers')
+  @Get(':shipmentId/offers')    
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(['MANUFACTURER', 'ADMIN', 'CARRIER_COMPANY', 'INDEPENDENT_CARRIER'])
   getShipmentsOffers(@Param('shipmentId') shipmentId: string, @Request() req) {

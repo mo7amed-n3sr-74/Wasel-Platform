@@ -16,7 +16,7 @@ function DashHome() {
 				<Stats />
 
 				{/* Main Grid - 2 columns */}
-				<div className="grid grid-cols-12 gap-8 my-4">
+				<div className="grid grid-cols-12 gap-4 my-4">
 					{/* Left Column - Active Shipments (8/12) */}
 					<div className="col-span-12 lg:col-span-8 h-full">
 						<ActiveShipments />
@@ -24,7 +24,7 @@ function DashHome() {
 
 					{/* Right Column - Recent Offers (4/12) */}
 					<div className="col-span-12 lg:col-span-4 h-full">
-						<RecentOffers />
+						<RecentOffers />	
 					</div>
 				</div>
 

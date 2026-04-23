@@ -18,17 +18,21 @@ function RecentOffers() {
 	const { data } = useRecentOffer();
 	const recentOffers = data?.data;
 
-	const { data: acceptedOffer, mutate: acceptOffer, isPending: isAcceptPending, isSuccess: isAcceptSuccess, isError: isAcceptError, error: acceptError } = useAcceptOffer(offerId);
-	const { data: rejectedOffer, mutate: rejectOffer, isPending: isRejectPending, isSuccess: isRejectSuccess, isError: isRejectError, error: rejectError } = useRejectOffer(offerId);
+	const { mutate: acceptOffer, isPending: isAcceptPending, isSuccess: isAcceptSuccess, isError: isAcceptError, error: acceptError } = useAcceptOffer(offerId || "");
+	const { mutate: rejectOffer, isPending: isRejectPending, isSuccess: isRejectSuccess, isError: isRejectError, error: rejectError } = useRejectOffer(offerId || "");
 	
-	const handleAcceptOffer = (offerId: string) => {
-		console.log(offerId + " - Accept");
-	}
-
-	const handleRejectOffer = (offerId: string) => {
-		if (!offerId) return;
-		setOfferId(offerId);
-		rejectOffer();
+	const handleOfferAction = (action: string, offerId: string) => {
+		if (action === "reject") {
+			if (!offerId) return;
+			setOfferId(offerId);
+			rejectOffer();
+		}
+		
+		if (action === "accept") {
+			if (!offerId) return;
+			setOfferId(offerId);
+			acceptOffer();
+		}
 	}
 
 	useEffect(() => {
@@ -42,10 +46,18 @@ function RecentOffers() {
 			setOfferId("");
 		}
 
-
 		if (isRejectSuccess) {
 			addNotification(
 				t("تم رفض العرض بنجاح"),
+				"success",
+				5000
+			);
+			setOfferId("");
+		}
+
+		if (isAcceptSuccess) {
+			addNotification(
+				t("تم قبول العرض بنجاح"),
 				"success",
 				5000
 			);
@@ -75,10 +87,10 @@ function RecentOffers() {
 	return (
 		<div className="w-full h-full bg-(--secondary-color) rounded-20 p-6 border border-(--tertiary-color)/20">
 			<div className="flex items-center justify-between mb-6">
-				<h2 className="font-main text-xl font-bold text-(--primary-text)">
+				<h2 className="text-xl font-bold text-(--primary-text)">
 					آخر العروض المستلمة
 				</h2>
-				<span className="text-sm font-main text-(--tertiary-color)">
+				<span className="text-sm text-(--tertiary-color)">
 					{recentOffers?.length} عرض
 				</span>
 			</div>
@@ -88,7 +100,7 @@ function RecentOffers() {
 					<div className="w-16 h-16 rounded-full bg-(--primary-color)/10 flex items-center justify-center mb-4">
 						<PiChatDots className="text-3xl text-(--primary-color)" />
 					</div>
-					<p className="font-main text-(--tertiary-color) text-center">
+					<p className="text-(--tertiary-color) text-center">
 						لم تتلقى أي عروض حتى الآن
 					</p>
 				</div>
@@ -97,65 +109,65 @@ function RecentOffers() {
 					{recentOffers?.map((offer) => (
 						<div
 							key={offer.id}
-							className={`p-4 rounded-10 border transition-all border border-(--primary-color)/25 bg-(--primary-color)/4`}
+							className={`p-3 rounded-xl border transition-all border border-(--primary-color)/25 bg-(--primary-color)/4`}
 						>
 							<div className="flex flex-col items-start justify-between gap-4">
 								<div className="flex-1 min-w-0">
-									<div className="flex items-center gap-2 mb-2">
-										<h3 className="font-main font-bold text-(--primary-text) truncate">
+									<div className="flex items-center justify-between gap-2 mb-2">
+										<h3 className="font-bold text-(--primary-text) truncate">
 											{
-												offer.profile.company_name? offer.profile.company_name : "غير معروف"
+												offer.profile.company_name || offer.profile.first_name + " " + offer.profile.last_name || "غير معروف"
 											}	
 										</h3>
-										{/* {offer.isBestOffer && (
-											<span className="text-xs font-main px-2 py-1 bg-(--primary-color) text-(--secondary-color) rounded-full whitespace-nowrap">
+										{offer.isBestOffer && (
+											<span className="text-[10px] px-3 py-1 bg-(--primary-color) text-(--secondary-color) rounded-full whitespace-nowrap">
 												أفضل عرض
 											</span>
-										)} */}
+										)}
 									</div>
 
-									<div className="flex items-center gap-2 mb-3">
-										{/* {renderStars(
+									{/* <div className="flex items-center gap-2 mb-3">
+										{renderStars(
 											offer.rating,
-										)} */}
-										{/* <span className="text-sm font-main text-(--tertiary-color)">
+										)}
+										<span className="text-sm text-(--tertiary-color)">
 											{offer.rating}{" "}
 											(
 											{
 												offer.reviewsCount
 											}
 											)
-										</span> */}
-									</div>
+										</span>
+									</div> */}
 
-									<div className="grid grid-cols-3 gap-3 text-sm">
+									<div className="flex items-center gap-4 text-sm">
 										<div>
-											<p className="font-main text-(--tertiary-color) text-xs mb-1">
+											<p className="text-(--secondary-text) text-xs mb-1">
 												السعر
 											</p>
-											<p className="font-main font-bold text-(--primary-color) text-base">
+											<p className="font-bold text-(--primary-color) text-base">
 												{
 													offer.price
 												}
 											</p>
 										</div>
 										<div>
-											<p className="font-main text-(--tertiary-color) text-xs mb-1">
+											<p className="text-(--secondary-text) text-xs mb-1">
 												الوقت
 												المتوقع
 											</p>
-											<p className="font-main font-bold text-(--primary-text)">
+											<p className="font-bold text-(--primary-text)">
 												{
 													offer.shipment.ETA
 												}
 											</p>
 										</div>
 										<div>
-											<p className="font-main text-(--tertiary-color) text-xs mb-1">
+											<p className="text-(--secondary-text) text-xs mb-1">
 												الشحنة
 											</p>
 											<Link to={`/dashboard/shipments/${offer.shipment.id}`}>
-												<p className="font-main font-bold text-(--primary-text) hover:text-(--primary-color) underline">
+												<p className="font-bold text-(--primary-text) hover:text-(--primary-color) underline">
 													{
 														offer.shipment.shipmentId
 													}
@@ -168,8 +180,8 @@ function RecentOffers() {
 								<div className="flex items-center gap-2">
 									<Button
 										size="sm"
-										className="h-9 px-3 rounded-8 bg-(--primary-color) hover:bg-(--primary-color)/80 whitespace-nowrap text-sm"
-										onClick={() => handleAcceptOffer(offer.id)}
+										className="h-9 px-6 rounded-8 bg-(--primary-color) hover:bg-(--primary-color)/80 whitespace-nowrap text-sm"
+										onClick={() => handleOfferAction("accept", offer.id)}
 										disabled={isAcceptPending}
 									>
 										{
@@ -186,8 +198,8 @@ function RecentOffers() {
 									<Button
 										size="sm"
 										variant="outline"
-										className="h-9 px-3 rounded-8 whitespace-nowrap text-sm"
-										onClick={() => handleRejectOffer(offer.id)}
+										className="h-9 px-6 rounded-8 whitespace-nowrap text-sm"
+										onClick={() => handleOfferAction("reject", offer.id)}
 										disabled={isRejectPending}
 									>
 										{

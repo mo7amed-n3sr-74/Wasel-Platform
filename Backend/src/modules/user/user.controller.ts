@@ -17,6 +17,7 @@ export class UserController {
   @UseGuards(AuthGuard)
   getUserOffers(@Req() req) {
     const username = req.user.username as string;
+    console.log(username);
     return this.userService.getUserOffers(username);
   }
 

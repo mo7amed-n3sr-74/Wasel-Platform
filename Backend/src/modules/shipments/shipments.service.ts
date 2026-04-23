@@ -20,12 +20,21 @@ export class ShipmentsService {
       include: {
         profile: true,
         attachments: true,
-        acceptedOffer: true
+        acceptedOffer: {
+          include: {
+            profile: {
+              select: {
+                first_name: true,
+                last_name: true
+              }
+            }
+          }
+        }
       }
     });
 
     if (!shipment) {
-      throw new HttpException('Shipment not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Shipment not found', HttpStatus.NO_CONTENT);
     }
 
     return shipment;

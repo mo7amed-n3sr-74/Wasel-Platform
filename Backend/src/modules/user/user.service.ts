@@ -67,7 +67,7 @@ export class UserService {
 
     const { offers } = profile;
     if (offers.length < 1) {
-      throw new HttpException('Offers not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Offers not found', HttpStatus.NO_CONTENT);
     }
 
     return offers;
