@@ -1,3 +1,7 @@
+import ProfilelBalance from "@/components/ProfileBalance";
+import ProfileLook from "@/components/ProfileLook";
+import ProfileReviews from "@/components/ProfileReviews";
+import ProfileShipments from "@/components/ProfileShipments";
 import {
     PiTruckTrailer,
     PiThermometerCold,
@@ -94,6 +98,14 @@ export const newShipmentSections = [
         title: "الدفع والمزانية",
         path: ""
     },
+]
+
+// Profile
+export const profileTabs = [
+    { title: "نظرة عامة", key: "public_view", component: ProfileLook },
+    { title: "الحمولات", key: "shipments", component: ProfileShipments },
+    { title: "الرصيد", key: "balance", component: ProfilelBalance },
+    { title: "التقييم", key: "reviews", component: ProfileReviews },
 ]
 
 export const packagingItems = [

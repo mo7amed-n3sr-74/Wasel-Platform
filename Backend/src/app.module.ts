@@ -18,6 +18,8 @@ import { R2Service } from './shared/services/r2/r2.service';
 import { DashboardController } from './modules/dashboard/dashboard.controller';
 import { DashboardService } from './modules/dashboard/dashboard.service';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { NotificationsService } from './notifications/notifications.service';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -36,8 +38,9 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     TruckModule,
     PrismaModule,
     DashboardModule,
+    NotificationsModule,
   ],
   controllers: [AppController, AddressController, R2Controller, DashboardController],
-  providers: [AppService, AuthGuard, AddressService, R2Service, DashboardService],
+  providers: [AppService, AuthGuard, AddressService, R2Service, DashboardService, NotificationsService],
 })
 export class AppModule {}

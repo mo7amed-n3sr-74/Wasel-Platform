@@ -39,7 +39,7 @@ dayjs.locale("ar");
 function Shipment() {
 	const offerInitial: Offer = {
 		price: '',
-		proposal: "",
+		proposal: ""
 	};
 
 	const { id: shipmentId } = useParams();
@@ -402,6 +402,69 @@ function Shipment() {
 								</div>
 							</div>
 						</div>
+						{/* Shipment info */}
+						<div className="flex items-center gap-5">
+							<div className="w-full p-5 rounded-2xl bg-(--secondary-color) flex flex-col gap-4">
+								<div className="flex items-center gap-2">
+									<div className="w-12 h-12 rounded-full bg-(--primary-color)/10 flex items-center justify-center">
+										<PiShippingContainer className="text-2xl text-(--primary-color)" />
+									</div>
+									<span className="font-main font-normal text-xl text-(--primary-text) capitalize">
+										النوع
+									</span>
+								</div>
+								<h4 className="overflow-clip text-ellipsis font-main text-xl text-(--secondary-text) capitalize">
+									{shipment.goodsType}
+								</h4>
+							</div>
+							<div className="w-full p-5 rounded-2xl bg-(--secondary-color) flex flex-col gap-4">
+								<div className="flex items-center gap-2">
+									<div className="w-12 h-12 rounded-full bg-(--primary-color)/10 flex items-center justify-center">
+										<PiVectorThree className="text-2xl text-(--primary-color)" />
+									</div>
+									<span className="font-main font-normal text-xl text-(--primary-text) capitalize">
+										الإبعاد
+									</span>
+								</div>
+								<h4 className="font-main text-xl text-(--secondary-text) capitalize">
+									{` ${shipment.length}م `}
+									<span className="text-base">
+										*
+									</span>
+									{` ${shipment.width}م `}
+									<span className="text-base">
+										*
+									</span>
+									{` ${shipment.height} م`}
+								</h4>
+							</div>
+							<div className="w-full p-5 rounded-2xl bg-(--secondary-color) flex flex-col gap-4">
+								<div className="flex items-center gap-2">
+									<div className="w-12 h-12 rounded-full bg-(--primary-color)/10 flex items-center justify-center">
+										<PiFrameCorners className="text-2xl text-(--primary-color)" />
+									</div>
+									<span className="font-main font-normal text-xl text-(--primary-text) capitalize">
+										الوزن
+									</span>
+								</div>
+								<h4 className="font-main text-xl text-(--secondary-text) capitalize">
+									{shipment.weight} طن
+								</h4>
+							</div>
+							<div className="w-full p-5 rounded-2xl bg-(--secondary-color) flex flex-col gap-4">
+								<div className="flex items-center gap-2">
+									<div className="w-12 h-12 rounded-full bg-(--primary-color)/10 flex items-center justify-center">
+										<PiTruck className="text-2xl text-(--primary-color)" />
+									</div>
+									<span className="font-main font-normal text-xl text-(--primary-text) capitalize">
+										التغليف
+									</span>
+								</div>
+								<h4 className="font-main text-xl text-(--secondary-text) capitalize">
+									{shipment.packaging}
+								</h4>
+							</div>
+						</div>
 						{/* Shipment images */}
 						<div className="w-full p-5 rounded-2xl bg-(--secondary-color)">
 							<div className="flex ietms-center justify-between mb-4">
@@ -477,69 +540,6 @@ function Shipment() {
 										</div>
 									);
 								})}
-							</div>
-						</div>
-						{/* Shipment info */}
-						<div className="flex items-center gap-5">
-							<div className="w-full p-5 rounded-2xl bg-(--secondary-color) flex flex-col gap-4">
-								<div className="flex items-center gap-2">
-									<div className="w-12 h-12 rounded-full bg-(--primary-color)/10 flex items-center justify-center">
-										<PiShippingContainer className="text-2xl text-(--primary-color)" />
-									</div>
-									<span className="font-main font-normal text-xl text-(--primary-text) capitalize">
-										النوع
-									</span>
-								</div>
-								<h4 className="font-main text-xl text-(--secondary-text) capitalize">
-									{shipment.goodsType}
-								</h4>
-							</div>
-							<div className="w-full p-5 rounded-2xl bg-(--secondary-color) flex flex-col gap-4">
-								<div className="flex items-center gap-2">
-									<div className="w-12 h-12 rounded-full bg-(--primary-color)/10 flex items-center justify-center">
-										<PiVectorThree className="text-2xl text-(--primary-color)" />
-									</div>
-									<span className="font-main font-normal text-xl text-(--primary-text) capitalize">
-										الإبعاد
-									</span>
-								</div>
-								<h4 className="font-main text-xl text-(--secondary-text) capitalize">
-									{` ${shipment.length}م `}
-									<span className="text-base">
-										*
-									</span>
-									{` ${shipment.width}م `}
-									<span className="text-base">
-										*
-									</span>
-									{` ${shipment.height} م`}
-								</h4>
-							</div>
-							<div className="w-full p-5 rounded-2xl bg-(--secondary-color) flex flex-col gap-4">
-								<div className="flex items-center gap-2">
-									<div className="w-12 h-12 rounded-full bg-(--primary-color)/10 flex items-center justify-center">
-										<PiFrameCorners className="text-2xl text-(--primary-color)" />
-									</div>
-									<span className="font-main font-normal text-xl text-(--primary-text) capitalize">
-										الوزن
-									</span>
-								</div>
-								<h4 className="font-main text-xl text-(--secondary-text) capitalize">
-									{shipment.weight} طن
-								</h4>
-							</div>
-							<div className="w-full p-5 rounded-2xl bg-(--secondary-color) flex flex-col gap-4">
-								<div className="flex items-center gap-2">
-									<div className="w-12 h-12 rounded-full bg-(--primary-color)/10 flex items-center justify-center">
-										<PiTruck className="text-2xl text-(--primary-color)" />
-									</div>
-									<span className="font-main font-normal text-xl text-(--primary-text) capitalize">
-										التغليف
-									</span>
-								</div>
-								<h4 className="font-main text-xl text-(--secondary-text) capitalize">
-									{shipment.packaging}
-								</h4>
 							</div>
 						</div>
 						{/* Shipment desc */}
