@@ -21,38 +21,57 @@ export class UserService {
   }
 
   async getUserShipments(
-    username: string,
+    userId: string,
+    role: Role
   ): Promise<Shipment[] | HttpException> {
-    const profile = await this.prisma.profile.findUnique({
-      where: {
-        username,
-      },
-      select: {
-        shipments: {
-          include: {
-            acceptedOffer: {
-              include: {
-                profile: {
-                  select: {
-                    username: true,
-                    first_name: true,
-                    last_name: true,
-                    role: true
-                  }
-                }
-              }
+
+    let res = [];
+    if (role.includes("MANUFACTURER")) {
+      const shipments = await this.prisma.shipment.findMany({
+        where: {
+          profile: {
+            userId
+          }
+        }
+      });
+
+      res = shipments;
+    }
+
+    if (["INDEPENDENT_CARRIER", "CARRIER_COMPANY"].includes(role)) {
+      const shipments = await this.prisma.shipment.findMany({
+        where: {
+          acceptedOffer: {
+            profile: {
+              userId
             }
           }
         },
-      },
-    });
+        include: {
+          acceptedOffer: {
+            select: {
+              id: true,
+              price: true,
+              proposal: true,
+              createdAt: true
+            }
+          }
+        }
+      });
 
-    const { shipments } = profile;
-    if (shipments.length === 0) {
+      res = shipments;
+    }
+
+    if (role.includes("ADMIN")) {
+      const shipments = await this.prisma.shipment.findMany({});
+      res = shipments;
+    }
+
+    if (res.length === 0) {
       throw new HttpException('No shipments found', HttpStatus.NO_CONTENT);
     }
 
-    return shipments;
+    return res;
   }
 
   async getUserOffers(userId: string, role: Role): Promise<Offer[] | HttpException> {

@@ -37,7 +37,7 @@ class PrivateHttpClient {
 	}
 
 	private isExpired() {
-		return Date.now() >= this.accessTokenExp - 10000;
+		return Date.now() >= this.accessTokenExp * 1000 - 10000;
 	}
 
 	private async refreshAccessToken() {

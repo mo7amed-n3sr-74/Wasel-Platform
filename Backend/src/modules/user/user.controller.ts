@@ -9,8 +9,8 @@ export class UserController {
   @Get('/shipments')
   @UseGuards(AuthGuard)
   getUserShipments(@Req() req) {
-    const username = req.user.username as string;
-    return this.userService.getUserShipments(username);
+    const { sub, role } = req.user;
+    return this.userService.getUserShipments(sub, role);
   }
 
   @Get('/offers')

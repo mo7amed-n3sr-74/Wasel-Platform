@@ -176,17 +176,28 @@ export class OffersService {
     if (!newOffer)
       throw new HttpException('Failed to send your offer', HttpStatus.INTERNAL_SERVER_ERROR);
 
+    // Current shipment's offers count
     const shipmentOffers = await this.prisma.offer.count({
       where: {
         shipmentId 
       }
-    })
+    });
+
+    // Best shipment offer price
+    const bestPrice = await this.prisma.offer.aggregate({
+      _min: {
+        price: true
+      }
+    });
+
+    console.log(bestPrice);
 
     const updateShipment = await this.prisma.shipment.update({
       where: {
         id: shipmentId
       },
       data: {
+        // bestPrice: bestPrice,
         offerCount: shipmentOffers
       }
     })

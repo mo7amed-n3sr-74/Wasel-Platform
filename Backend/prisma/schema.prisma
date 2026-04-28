@@ -1,14 +1,14 @@
 generator client {
-    provider = "prisma-client-js"
-    // output = "../src/generated/prisma"
+  provider = "prisma-client-js"
+  // output = "../src/generated/prisma"
 }
 
 datasource db {
-    provider = "mysql"
-    url = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
-// Models enums
+// Global enums
 enum Role {
   ADMIN
   MANUFACTURER
@@ -44,6 +44,12 @@ enum AttachmentType {
   Image
 }
 
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+}
+
+// Payment Enums
 enum BudegtType {
   OPEN_BUDGET
   LIMITED_BUDGET
@@ -54,6 +60,51 @@ enum PaymentType {
   BANK_TRNASFER
 }
 
+enum TransactionType {
+  RECHARGE
+  WITHDRAW
+  SHIPMENT_PAYMENT
+  REFUND
+  FEE
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum WithdrawalStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum ShipmentPaymentStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+  FAILED
+}
+
+// Truck enum
+enum TruckStatus {
+  ACTIVE
+  IN_WORK
+  IN_MAINTENANCE
+  OUT
+}
+
+enum DriverStatus {
+  PENDING
+  AVAILABLE
+  IN_WORK
+  IN_REST
+}
+
 // Database models
 model Profile {
   id                 String   @id @default(uuid())
@@ -61,7 +112,7 @@ model Profile {
   first_name         String?
   last_name          String?
   picture            String?
-  bio                String? @db.LongText
+  bio                String?  @db.LongText
   gender             String?
   phone              String?
   dateOfBirth        String?
@@ -73,38 +124,39 @@ model Profile {
   verify             Boolean  @default(false)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
-  company_name String?
-  balance Float? @default(0)
-  totalSpent Float? @default(0) 
+  company_name       String?
 
   // Relations
-  otp               Otp?
-  offers            Offer[]
-  shipments         Shipment[]
-  notifications     Notification[]
-  trucks            Truck[]
-  addresses         Address[]
+  otp               Otp?           @relation("ProfileOtp")
+  offers            Offer[]        @relation("ProfileOffers")
+  shipments         Shipment[]     @relation("ProfileShipments")
+  notifications     Notification[] @relation("ProfileNotifications")
+  trucks            Truck[]        @relation("ProfileTrucks")
+  drivers           Driver[]       @relation("ProfileDrivers")
+  addresses         Address[]      @relation("ProfileAdresses")
   invoicesAsClient  Invoice[]      @relation("CompanyInvoices")
   invoicesAsCarrier Invoice[]      @relation("CarrierInvoices")
   userId            String         @unique
-  user              User           @relation(fields: [userId], references: [id])
+  user              User           @relation("ProfileUser", fields: [userId], references: [id])
 }
 
 model User {
-  id            String          @id @default(uuid())
-  email         String          @unique
-  password      String
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
 
   createAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  profile       Profile?
+  profile     Profile?        @relation("ProfileUser")
   authProviders authProviders[]
+  wallet        Wallet?
 }
 
 model Shipment {
-  id String @id @default(uuid())
+  id         String @id @default(uuid())
   shipmentId String @unique
+
   // Locations' points
   origin      String
   destination String
@@ -115,90 +167,94 @@ model Shipment {
   destination_lat Float
   destination_lng Float
 
-  shipmentType    String
-  packaging String
-  goodsType String
-  description String @db.LongText
-  offerCount  Int
-  weight      Float?
-  length      Float?
-  width       Float?
-  height      Float?
-  stacking    Boolean?
-  status ShipmentStatus @default(PENDING)
-  ETA String?
-  distance String?
+  shipmentType String
+  packaging    String
+  goodsType    String
+  description  String         @db.LongText
+  weight       Float?
+  length       Float?
+  width        Float?
+  height       Float?
+  stacking     Boolean?
+  status       ShipmentStatus @default(PENDING)
+  ETA          String?
+  distance     String?
 
   pickupAt   DateTime
   deliveryAt DateTime
 
+  // Offer
+  offerCount Int
+  bestPrice  Decimal?
+
   // Additional Options
-  urgent Boolean?
+  urgent              Boolean?
   additionalInsurance Boolean?
-  twoDrivers Boolean?
-  noFriday Boolean?
+  twoDrivers          Boolean?
+  noFriday            Boolean?
 
   // Payment
-  budgetType BudegtType @default(OPEN_BUDGET)
-  suggestedBudget Float?
-  paymentType PaymentType @default(BANK_TRNASFER)
-  acceptedOfferId String? @unique
+  budgetType      BudegtType  @default(OPEN_BUDGET)
+  suggestedBudget Decimal?
+  paymentType     PaymentType @default(BANK_TRNASFER)
+  acceptedOfferId String?     @unique
 
   createAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
-  attachments ShipmentAttachment[]
-  offers    Offer[] @relation("ShipmentOffers")
-  invoice   Invoice?
-  profileId String
-  acceptedOffer Offer? @relation("AcceptedOffer", fields: [acceptedOfferId], references: [id])
-  profile   Profile  @relation(fields: [profileId], references: [id])
+  attachments      ShipmentAttachment[]
+  offers           Offer[]              @relation("ShipmentOffers")
+  invoice          Invoice?
+  shipmentPayments ShipmentPayment[]    @relation("ShipmentPayments")
+  acceptedOffer    Offer?               @relation("AcceptedOffer", fields: [acceptedOfferId], references: [id])
+  profileId        String
+  profile          Profile              @relation("ProfileShipments", fields: [profileId], references: [id])
 }
 
 model ShipmentAttachment {
   id String @id @default(uuid())
 
   attachmentType AttachmentType
-  url String @db.LongText
-  name String?
-  extension String?
-  size String?
+  url            String         @db.LongText
+  name           String?
+  extension      String?
+  size           String?
 
-  createAt DateTime @default(now())
+  createAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   shipmentId String
-  shipment Shipment @relation(fields: [shipmentId], references: [id])
+  shipment   Shipment @relation(fields: [shipmentId], references: [id])
 }
 
 model Offer {
   id        String      @id @default(uuid())
-  price     Float
-  proposal  String @db.LongText
+  price     Decimal
+  proposal  String      @db.LongText
   status    OfferStatus @default(PENDING)
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
   // Relations
   profileId  String
+  profile    Profile   @relation("ProfileOffers", fields: [profileId], references: [id])
   shipmentId String
-  profile    Profile  @relation(fields: [profileId], references: [id])
-  shipment   Shipment @relation("ShipmentOffers", fields: [shipmentId], references: [id])
+  shipment   Shipment  @relation("ShipmentOffers", fields: [shipmentId], references: [id])
   acceptedBy Shipment? @relation("AcceptedOffer")
 }
 
 model Notification {
   id        String   @id @default(uuid())
-  title   String
-  message String @db.LongText
+  title     String
+  message   String   @db.LongText
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
   profileId String
-  profile   Profile @relation(fields: [profileId], references: [id])
+  profile   Profile @relation("ProfileNotifications", fields: [profileId], references: [id])
 }
 
 model Otp {
@@ -210,7 +266,7 @@ model Otp {
 
   // Relations
   profileId String  @unique
-  profile   Profile @relation(fields: [profileId], references: [id])
+  profile   Profile @relation("ProfileOtp", fields: [profileId], references: [id])
 }
 
 model authProviders {
@@ -228,17 +284,45 @@ model authProviders {
   user   User   @relation(fields: [userId], references: [id])
 }
 
+// CARRIER_COMAPNY tables
 model Truck {
-  id           String   @id @default(uuid())
-  truckLicense String
-  truckFront   String
-  truckType    String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                  String             @id @default(uuid())
+  truck_num           String
+  truck_license_front String
+  truck_license_back  String
+  truck_front         String
+  truck_type          String
+  truck_model         String
+  status              TruckStatus        @default(ACTIVE)
+  verificationStatus  VerificationStatus @default(PENDING)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
 
   // Relations
   profileId String
-  profile   Profile @relation(fields: [profileId], references: [id])
+  profile   Profile @relation("ProfileTrucks", fields: [profileId], references: [id])
+}
+
+model Driver {
+  id                     String             @id @default(uuid())
+  first_name             String
+  last_name              String
+  age                    Int
+  national_id            String
+  picture                String
+  license_front          String
+  license_back           String
+  national_id_card_front String
+  national_id_card_back  String
+  status                 DriverStatus       @default(PENDING)
+  verificationStatus     VerificationStatus @default(PENDING)
+
+  // Relations
+  addresses Address[] @relation("DriverAddresses")
+  profileId String
+  profile   Profile   @relation("ProfileDrivers", fields: [profileId], references: [id])
+
+  @@index([id])
 }
 
 model Address {
@@ -248,8 +332,10 @@ model Address {
   country String
 
   // Relations
-  profileId String
-  profile   Profile @relation(fields: [profileId], references: [id])
+  profileId String?
+  profile   Profile? @relation("ProfileAdresses", fields: [profileId], references: [id])
+  driverId String?
+  driver   Driver?  @relation("DriverAddresses", fields: [driverId], references: [id])
 }
 
 model Invoice {
@@ -276,4 +362,79 @@ model Invoice {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// Wallet and Payment Models
+model Wallet {
+  id        String   @id @default(uuid())
+  balance   Decimal  @default(0) @db.Decimal(19, 4)
+  currency  String   @default("USD")
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userId           String            @unique
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions     Transaction[]
+  withdrawals      Withdrawal[]
+  shipmentPayments ShipmentPayment[]
+
+  @@index([userId])
+}
+
+model Transaction {
+  id                    String            @id @default(uuid())
+  type                  TransactionType
+  amount                Decimal           @db.Decimal(19, 4)
+  status                TransactionStatus @default(PENDING)
+  referenceType         String? // e.g., "shipment", "invoice"
+  referenceId           String? // e.g., shipmentId, invoiceId
+  description           String?           @db.Text
+  paymentMethod         String? // e.g., "card", "bank_transfer"
+  externalTransactionId String?           @unique
+  createdAt             DateTime          @default(now())
+
+  // Relations
+  walletId        String
+  wallet          Wallet           @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  shipmentPayment ShipmentPayment? @relation("ShipmentPaymentTransaction")
+
+  @@index([walletId])
+  @@index([createdAt])
+  @@index([referenceType, referenceId])
+}
+
+model Withdrawal {
+  id          String           @id @default(uuid())
+  amount      Decimal          @db.Decimal(19, 4)
+  status      WithdrawalStatus @default(PENDING)
+  bankAccount Json // { accountNumber, bankCode, accountHolder, etc }
+  processedAt DateTime?
+  createdAt   DateTime         @default(now())
+
+  // Relations
+  walletId String
+  wallet   Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@index([walletId])
+  @@index([createdAt])
+}
+
+model ShipmentPayment {
+  id        String                @id @default(uuid())
+  amount    Decimal               @db.Decimal(19, 4)
+  status    ShipmentPaymentStatus @default(PENDING)
+  paidAt    DateTime?
+  createdAt DateTime              @default(now())
+
+  // Relations
+  shipmentId    String
+  shipment      Shipment     @relation("ShipmentPayments", fields: [shipmentId], references: [id], onDelete: Cascade)
+  walletId      String
+  wallet        Wallet       @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  transactionId String?      @unique
+  transaction   Transaction? @relation("ShipmentPaymentTransaction", fields: [transactionId], references: [id])
+
+  @@index([walletId])
+  @@index([shipmentId])
+  @@index([createdAt])
 }

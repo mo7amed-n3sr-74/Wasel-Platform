@@ -21,6 +21,7 @@ import { UpdateShipmentDto } from './dto/update-shipment.dto';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { RolesGuard } from '@/common/guards/rolesGuard';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { ShipmentAttachments } from '@/shared/interfaces/interfaces';
 
 @Controller('shipments')
 export class ShipmentsController {
@@ -68,10 +69,7 @@ export class ShipmentsController {
     @Body() body,
     @Request() req,
     @UploadedFiles()
-    shipmentAssets: {
-      shipmentImgs: Express.Multer.File[];
-      shipmentDocs: Express.Multer.File[];
-    },
+    shipmentAssets: ShipmentAttachments,
   ) {
     const userId = req.user.sub as string;
     const data: CreateShipmentDto = JSON.parse(body.data);

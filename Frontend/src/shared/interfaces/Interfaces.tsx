@@ -21,7 +21,6 @@ export interface Shipment {
     ETA?: string,
     distance?: string,
     status?: "PENDING" | "IN_PROGRESS" | "IN_TRANSIT" | "DELAYED" | "DELIVERED" | "CANCELLED";
-    offersCount?: number,
 
     urgent?: boolean,
     additionalInsurance?: boolean,
@@ -33,6 +32,7 @@ export interface Shipment {
     paymentType: string
 
     offerCount?: number
+    bestPrice?: number
 
     attachments?: [{
         attachmentType: string,

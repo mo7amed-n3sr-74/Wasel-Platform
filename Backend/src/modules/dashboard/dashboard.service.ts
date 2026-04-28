@@ -1,23 +1,26 @@
 import { PrismaService } from '@/database/prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { WalletService } from '../wallet';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class DashboardService {
 
-    constructor(private readonly prismaService: PrismaService) {}
+    constructor(
+        private readonly prismaService: PrismaService,
+    ) {}
 
     async getStats (req) {
         const userId = req.user.sub as string;
-        const role = req.user.role as string;
+        const role: Role = req.user.role;
 
         let res = {};
 
-        const profile = await this.prismaService.profile.findUnique({
-            where: {
-                userId
-            }
-        })
-
+        // const profile = await this.prismaService.profile.findUnique({
+        //     where: {
+        //         userId
+        //     }
+        // })
 
         const shipments  = await this.prismaService.shipment.count({
             where: {
@@ -27,7 +30,7 @@ export class DashboardService {
             }
         });
 
-        if (role === "MANUFACTURER") {
+        if (Role.CARRIER_COMPANY.includes(role) || Role.MANUFACTURER.includes(role)) {
             const activeShipments = await this.prismaService.shipment.count({
                 where: {
                     status: "PENDING",
@@ -43,13 +46,25 @@ export class DashboardService {
                 }
             });
 
+            const wallet = await this.prismaService.wallet.findUnique({
+                where: {
+                    userId,
+                },
+                select: {
+                    balance: true
+                }
+            })
+
+            if (!wallet) throw new HttpException("Failed to retrieve wallet balance", HttpStatus.INTERNAL_SERVER_ERROR);
+
             res["shipments"] = shipments;
             res["activeShipments"] = activeShipments;
             res["completedShipments"] = compoletedShipments;
-            res["balance"] = profile.balance;
-            res["totalSpent"] = profile.totalSpent;
-            return res;
-        }
-    }
+            res["balance"] = wallet.balance || 0;
+            res["totalSpent"] = 0;
 
+        }
+
+        return res;
+    }
 }

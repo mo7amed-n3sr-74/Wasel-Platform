@@ -4,6 +4,8 @@ import { PrismaService } from '@/database/prisma/prisma.service';
 import { CreateShipmentDto } from './dto/create-shipment.dto';
 import { UpdateShipmentDto } from './dto/update-shipment.dto';
 import { R2Service } from '@/shared/services/r2/r2.service';
+import Multer from "multer";
+import { ShipmentAttachments } from '@/shared/interfaces/interfaces';
 
 @Injectable()
 export class ShipmentsService {
@@ -129,10 +131,7 @@ export class ShipmentsService {
   async createShipment(
     userId,
     data: CreateShipmentDto,
-    shipmentAssets: {
-      shipmentImgs: Express.Multer.File[];
-      shipmentDocs: Express.Multer.File[];
-    },
+    shipmentAttachments: ShipmentAttachments,
   ) {
     const userProfile = await this.prisma.profile.findUnique({
       where: {
@@ -147,7 +146,7 @@ export class ShipmentsService {
       );
     }
 
-    const { shipmentImgs, shipmentDocs } = shipmentAssets;
+    const { shipmentImgs, shipmentDocs } = shipmentAttachments;
     if (shipmentImgs.length < 1 || shipmentDocs.length < 1) {
       throw new HttpException(
         "Shipment's docs or imgs are not found",
@@ -225,7 +224,7 @@ export class ShipmentsService {
       },
     });
 
-    for (const file of shipmentAssets.shipmentImgs) {
+    for (const file of shipmentAttachments.shipmentImgs) {
       const type = file.mimetype.split('/')[0];
       const name = file.originalname.split(".").slice(0, file.originalname.split(".").length - 1).join(".");
       const extension = file.originalname.split(".").splice(file.originalname.split(".").length - 1, 1)[0];
@@ -250,7 +249,7 @@ export class ShipmentsService {
       });
     }
 
-    for (const file of shipmentAssets.shipmentDocs) {
+    for (const file of shipmentAttachments.shipmentDocs) {
       const type = file.mimetype.split('/')[0];
       const name = file.originalname.split(".").slice(0, file.originalname.split(".").length - 1).join(".");
       const extension = file.originalname.split(".").splice(file.originalname.split(".").length - 1, 1)[0];

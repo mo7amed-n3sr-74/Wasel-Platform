@@ -6,12 +6,14 @@ import { SendMail } from '@/shared/services/Nodemailer';
 import { OtpGenerator } from '@/shared/services/OtpGenerator';
 import { SignupDto } from './dto/signup.dto';
 import { usernameVerify } from './dto/username-verify';
+import { WalletService } from '../wallet';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly walletService: WalletService,
   ) {}
 
   async signup({ username, role, email, password }: SignupDto) {
@@ -56,6 +58,9 @@ export class AuthService {
         },
       },
     });
+
+    const userWallet = await this.walletService.initializeWallet(newUser.id);
+    if (!userWallet) throw new HttpException("Failed to create user wallet", HttpStatus.INTERNAL_SERVER_ERROR);
 
     return {
       statusCode: 201,

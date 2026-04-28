@@ -11,15 +11,16 @@ import { AddressController } from './modules/address/address.controller';
 import { AddressService } from './modules/address/address.service';
 import { AddressModule } from './modules/address/address.module';
 import { InvoiceModule } from './modules/invoice/invoice.module';
-import { TruckModule } from './modules/truck/truck.module';
 import { PrismaModule } from './database/prisma/prisma.module';
 import { R2Controller } from './shared/services/r2/r2.controller';
 import { R2Service } from './shared/services/r2/r2.service';
 import { DashboardController } from './modules/dashboard/dashboard.controller';
 import { DashboardService } from './modules/dashboard/dashboard.service';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
-import { NotificationsService } from './notifications/notifications.service';
-import { NotificationsModule } from './notifications/notifications.module';
+import { NotificationsService } from './modules/notifications/notifications.service';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { WalletModule } from './modules/wallet';
+import { TrucksModule } from './modules/trucks/trucks.module';
 
 @Module({
   imports: [
@@ -35,10 +36,11 @@ import { NotificationsModule } from './notifications/notifications.module';
     OffersModule,
     AddressModule,
     InvoiceModule,
-    TruckModule,
     PrismaModule,
     DashboardModule,
     NotificationsModule,
+    WalletModule,
+    TrucksModule
   ],
   controllers: [AppController, AddressController, R2Controller, DashboardController],
   providers: [AppService, AuthGuard, AddressService, R2Service, DashboardService, NotificationsService],

@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Wallet, ArrowUpRight, ArrowDownLeft } from "lucide-react";
+import PaymentDialog from "./PaymentDialog";
 
 interface Transaction {
 	id: string;
@@ -9,6 +11,7 @@ interface Transaction {
 }
 
 function ProfileBalance() {
+	const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
 	const totalBalance = 300000;
 	const pendingBalance = 20000;
 	const transferredBalance = 20000;
@@ -44,7 +47,7 @@ function ProfileBalance() {
 	return (
 		<div className="space-y-6">
 			{/* Balance Card */}
-			<div className="rounded-[28px] bg-gradient-to-l from-[#3b5bdb] to-[#4568e2] p-8 text-white shadow-lg">
+			<div className="rounded-[28px] bg-linear-to-l from-[#3b5bdb] to-[#4568e2] p-8 text-white shadow-lg">
 				<div className="flex flex-col gap-6">
 					<div>
 						<p className="text-sm font-medium text-white/80 mb-2">
@@ -83,7 +86,10 @@ function ProfileBalance() {
 
 			{/* Action Buttons */}
 			<div className="grid grid-cols-2 gap-4 sm:gap-6">
-				<button className="rounded-full border-2 border-(--primary-color) py-4 px-6 font-semibold text-(--primary-color) transition duration-300 hover:bg-(--primary-color)/5">
+				<button
+					onClick={() => setIsPaymentDialogOpen(true)}
+					className="rounded-full border-2 border-(--primary-color) py-4 px-6 font-semibold text-(--primary-color) transition duration-300 hover:bg-(--primary-color)/5"
+				>
 					<span className="flex items-center justify-center gap-2">
 						<Wallet className="w-5 h-5" />
 						شحن المحفظة
@@ -154,6 +160,11 @@ function ProfileBalance() {
 					))}
 				</div>
 			</div>
+
+			<PaymentDialog
+				isOpen={isPaymentDialogOpen}
+				onClose={() => setIsPaymentDialogOpen(false)}
+			/>
 		</div>
 	);
 }

@@ -104,7 +104,7 @@ function Profile() {
                     </div>
 
                     <div className="p-5 rounded-2xl bg-(--secondary-color) overflow-hidden border-2 border-(--tertiary-color)/50">
-                        <div className="relative flex items-center mb-6 before:content before:absolute before:bottom-1 before:left-0 before:h-0.5 before:w-full before:bg-linear-to-r before:from-transparent before:via-(--primary-color) before:to-transparent">
+                        <div className="relative flex items-center mb-6 before:content before:absolute before:bottom-0 before:left-0 before:h-0.5 before:w-full before:bg-linear-to-r before:from-transparent before:via-(--primary-color) before:to-transparent">
                             {
                                 profileTabs.map((tab, idx) => {
                                     return (

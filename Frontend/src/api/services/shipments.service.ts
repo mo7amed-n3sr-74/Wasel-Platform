@@ -9,7 +9,7 @@ class ShipmentsService {
 		const params = query && new URLSearchParams(
 			Object.entries(query).map(([key, value]) => [
 				key,
-				String(value),
+				String(value),	
 			]),
 		);
 		return privateHttpClient.get(`/shipments?${params}`);

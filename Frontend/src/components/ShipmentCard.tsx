@@ -58,15 +58,15 @@ function ShipmentCard({ shipment }: { shipment: Shipment }) {
             <div className="flex items-center gap-3 mb-4">
                     { shipment.budgetType !== 'OPEN_BUDGET' && (
                         <div className="w-1/2 font-main flex flex-col items-start gap-2 mb-1 rounded-lg border border-(--tertiary-color) p-2">
-                                <h3 className="text-sm text-(--secondary-text) capitalize">السعر المقترح</h3>
-                                <h4 className="text-sm font-medium text-(--primary-text) text-nowrap"><span className="font-bold text-base text-(--primary-color)">{ shipment.suggestedBudget }</span> ج</h4>
+                            <h3 className="text-sm text-(--secondary-text) capitalize">السعر المقترح</h3>
+                            <h4 className="text-sm font-medium text-(--primary-text) text-nowrap"><span className="font-bold text-base text-(--primary-color)">{ shipment.suggestedBudget }</span> ج</h4>
                             {/* <h4 className="font-main text-sm font-medium text-(--primary-text) text-nowrap">أقل عرض: <span className="font-bold text-lg text-(--green-color)">2200</span> ج</h4> */}
                         </div>
                     ) }
 
                     <div className="w-1/2 font-main flex flex-col items-start gap-2 mb-1 rounded-lg border border-(--tertiary-color) p-2">
-                            <h3 className="text-sm text-(--secondary-text) capitalize">العروض</h3>
-                            <h4 className="font-main font-medium text-sm text-(--primary-text)"><span className="font-semibold text-base text-(--primary-color)">{ shipment.offerCount }</span> عرض حتي الآن</h4>
+                        <h3 className="text-sm text-(--secondary-text) capitalize">العروض</h3>
+                        <h4 className="font-main font-medium text-sm text-(--primary-text)"><span className="font-semibold text-base text-(--primary-color)">{ shipment.offerCount }</span> عرض حتي الآن</h4>
                     </div>
 
             </div>

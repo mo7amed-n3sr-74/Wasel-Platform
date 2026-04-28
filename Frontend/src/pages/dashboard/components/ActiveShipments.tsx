@@ -1,4 +1,6 @@
 import { useShipments } from "@/api/hooks/shipments/useShipments";
+import { useUserShipments } from "@/api/hooks/user/useUserShipments";
+import { useProps } from "@/components/PropsProvider";
 import { Button } from "@/components/ui/button";
 import {
 	Table,
@@ -45,9 +47,16 @@ const getStatusBadgeColor = (
 
 function ActiveShipments() {
 
-	const { data } = useShipments();
-	const shipments: Shipment[] | [] = data?.data.shipments || [];
-	console.log(shipments)
+	// const { data } = useShipments();
+	const { user } = useProps();
+	const { data } = useUserShipments();
+	const shipments: Shipment[] | [] = data?.data || [];
+
+	// User Roles
+	const isIndependentCarrier = user?.role === "INDEPENDENT_CARRIER";
+	const isCarrierCompany = user?.role === "CARRIER_COMPANY";
+	const isManufacturer = user?.role === "MANUFACTURER";
+	// console.log(isIndependentCarrier || isCarrierCompany);
 
 	return (
 		<div className="w-full h-full flex flex-col bg-(--secondary-color) rounded-20 p-6 border border-(--tertiary-color)/20">
@@ -84,11 +93,21 @@ function ActiveShipments() {
 									الحالة
 								</TableHead>
 								<TableHead className="font-main font-bold text-(--primary-text) text-center">
+									الميزانية
+								</TableHead>
+								<TableHead className="font-main font-bold text-(--primary-text) text-center">
 									العروض
 								</TableHead>
-								<TableHead className="font-main font-bold text-(--primary-text) text-right">
-									أفضل سعر
-								</TableHead>
+								{ isManufacturer && (
+									<TableHead className="font-main font-bold text-(--primary-text) text-right">
+										أفضل سعر
+									</TableHead>
+								) }
+								{ (isIndependentCarrier || isCarrierCompany) && (
+									<TableHead className="font-main font-bold text-(--primary-text) text-right">
+										سعرك
+									</TableHead>
+								) }
 								<TableHead className="font-main font-bold text-(--primary-text) text-right">
 									وقت الحمولة
 								</TableHead>
@@ -130,10 +149,20 @@ function ActiveShipments() {
 										</TableCell>
 										<TableCell>
 											<span
-												className={`font-main text-sm px-3 py-1 rounded-full ${statusColor.bg} ${statusColor.text}`}
+												className={`text-sm px-3 py-1 rounded-full ${statusColor.bg} ${statusColor.text}`}
 											>
 												{
 													statusColor.label
+												}
+											</span>
+										</TableCell>
+										<TableCell>
+											<span className="text-sm px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-700">
+												{
+													shipment.budgetType === "OPEN_BUDGET" && "مفتوحة"
+												}
+												{
+													shipment.budgetType === "LIMITED_BUDGET" && "محدودة"
 												}
 											</span>
 										</TableCell>
@@ -142,12 +171,21 @@ function ActiveShipments() {
 												shipment.offerCount || 0
 											}
 										</TableCell>
-										<TableCell className="text-right font-main font-bold text-(--primary-color)">
-											{
-												shipment.suggestedBudget
-											}{" "}
-											ر.س
-										</TableCell>
+										{ isManufacturer && (
+											<TableCell className="text-right font-main font-bold text-(--primary-color)">
+												{
+													shipment.bestPrice || 0
+												}
+											</TableCell>
+										) }
+										{ (isIndependentCarrier || isCarrierCompany) && (
+											<TableCell className="text-right font-main font-bold text-(--primary-color)">
+												{
+													shipment.acceptedOffer?.price || 0
+												}{" "}
+												ر.س
+											</TableCell>
+										) }
 										<TableCell className="text-right font-main font-bold text-(--primary-color)">
 											{
 												shipment.ETA

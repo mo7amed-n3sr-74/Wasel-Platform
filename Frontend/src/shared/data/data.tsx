@@ -13,7 +13,11 @@ import {
     PiShippingContainer,
     PiTicket,
     PiGear,
-    PiPath
+    PiPath,
+    PiWallet,
+    PiCheckCircle,
+    PiClock,
+    PiSteeringWheel
 } from "react-icons/pi";
 
 export const ar_months = {
@@ -140,6 +144,18 @@ export const sidebarItems = [
         hasAccess: ["admin", "manufacturer", "carrier_company", "independent_carrier"]
     },
     {
+        name: "السواقين",
+        icon: PiSteeringWheel,
+        path: "drivers",
+        hasAccess: ["admin", "carrier_company"]
+    },
+    {
+        name: "الشاحنات",
+        icon: PiTruckTrailer,
+        path: "trucks",
+        hasAccess: ["admin", "carrier_company"]
+    },
+    {
         name: "التتبعات",
         icon: PiPath,
         path: "tracking",
@@ -158,3 +174,36 @@ export const sidebarItems = [
         hasAccess: ["admin", "manufacturer", "carrier_company", "independent_carrier"]
     },
 ];
+
+export const statItems = [
+    {
+        key: "balance",
+        title: "balance",
+        icon: PiWallet,
+        hasAccess: ["admin", "manufacturer", "carrier_company"]
+    },
+    {
+        key: "totalSpent",
+        title: "total spent",
+        icon: PiWallet,
+        hasAccess: ["manufacturer", "carrier_company"]
+    },
+    {
+        key: "activeShipments",
+        title: "active shipments",
+        icon: PiPath,
+        hasAccess: ["admin", "manufacturer", "carrier_company", "independent_carrier"]
+    },
+    {
+        key: "completedShipments",
+        title: "completed shipments",
+        icon: PiCheckCircle,
+        hasAccess: ["admin", "manufacturer", "carrier_company", "independent_carrier"]
+    },
+    {
+        key: "avgDeliveryTime",
+        title: "Avg Delivery Time",
+        icon: PiClock,
+        hasAccess: ["admin"]
+    },
+]
