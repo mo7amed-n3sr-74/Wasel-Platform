@@ -12,11 +12,6 @@ import ResetPassword from "./pages/auth/ResetPassword";
 // App Pages
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
-
-// External Libraries
-import "./i18n";
-import { useTranslation } from "react-i18next";
-import { isAxiosError } from "axios";
 import Shipments from "./pages/Shipments";
 import NewShipment from "./pages/NewShipment";
 import NotFound from "./pages/NotFound";
@@ -27,11 +22,17 @@ import DashHome from "./pages/dashboard/DashHome";
 import DashShipments from "./pages/dashboard/DashShipments";
 import DashShipmentOffers from "./pages/dashboard/DashShipmentOffers";
 import HasAccess from "./components/HasAccess";
+import DashShipmentEdit from "./pages/dashboard/DashShipmentEdit";
+import DashOffers from "./pages/dashboard/DashOffers";
+// External Libraries
+import "./i18n";
+import { isAxiosError } from "axios";
+// Custom hooks
+import { useTranslation } from "react-i18next";
 import { useRefresh } from "./api/hooks/auth/useRefresh";
 import { useMe } from "./api/hooks/auth/useMe";
-import DashShipmentEdit from "./pages/dashboard/DashShipmentEdit";
 import { useSignout } from "./api/hooks/auth/useSignout";
-import DashOffers from "./pages/dashboard/DashOffers";
+import DashDrivers from "./pages/dashboard/DashDrivers";
 
 function App() {
 	const { i18n, t } = useTranslation();
@@ -187,6 +188,7 @@ function App() {
 						path="/shipments/:id"
 						element={<Shipment />}
 					></Route>
+
 					{/* Dashoard */}
 					<Route
 						path="/dashboard"
@@ -220,8 +222,10 @@ function App() {
 							path="offers"
 							element={<DashOffers />}
 						/>
-						{/* <Route path="analytics" element={<DashAnalytics />} />
-						<Route path="settings" element={<DashSettings />} /> */}
+						<Route
+							path="drivers"
+							element={<DashDrivers />}
+						/>
 					</Route>
 					{/* Default */}
 					<Route path="*" element={<NotFound />} />

@@ -132,8 +132,8 @@ class PrivateHttpClient {
 		return this.instance.get(url);
 	}
 
-	post(url: string, data?: Record<string, unknown>) {
-		return this.instance.post(url, data);
+	post(url: string, data?: Record<string, unknown>, config?: Record<string, unknown>) {
+		return this.instance.post(url, data, config);
 	}
 
 	put(url: string, data: Record<string, unknown>) {
@@ -161,8 +161,8 @@ class PublicHttpClient {
 		return this.instance.get(url);
 	}
 
-	post(url: string, data?: Record<string, unknown>) {
-		return this.instance.post(url, data);
+	post(url: string, data?: Record<string, unknown>, config?: Record<string, unknown>) {
+		return this.instance.post(url, data, config);
 	}
 }
 export const publicHttpClient = new PublicHttpClient();

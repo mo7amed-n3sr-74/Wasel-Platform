@@ -18,7 +18,7 @@ function Home() {
 
 	const [ email, setEmail ] = useState<string>('');
 	const { addNotification } = useNotification();
-
+	
 	const handleClick = () => {
 		if (!email) {
 			addNotification(

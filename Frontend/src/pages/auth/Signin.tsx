@@ -1,89 +1,30 @@
 import { useState, type FormEvent } from "react";
-import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
-import { useProps } from "@/components/PropsProvider";
-import { useNotification } from "../../components/NotificationContext";
-import { privateHttpClient } from "@/api/client/HttpClient";
+import { Link } from "react-router-dom";
 import type { SigninForm } from "@/shared/interfaces/Interfaces";
 import { PiEnvelopeLight, PiLockLight, PiSignIn } from "react-icons/pi";
+import { useSignin } from "@/api/hooks/auth/useSignin";
 // External Library
-import axios from "axios";
+// import { isAxiosError } from "axios";
 import Main from "@/components/Main";
+import toast from "react-hot-toast";
+import ErrorToastContent from "@/components/ui/ErrorToastContent";
+// Validation schemas
+import { signinSchema } from "@/shared/validation/schemas";
 
 function Signin() {
+	const { mutate } = useSignin();
 	const [form, setForm] = useState<SigninForm>({
 		email: "",
 		password: "",
 	});
-	const navigate = useNavigate();
-	const { addNotification } = useNotification();
-	const { setUser } = useProps();
-	const { t } = useTranslation();
 
 	const submitHandling = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const { email, password } = form;
-
-		if (!email || !password) {
-			addNotification(
-				"من فضلك أدخل الإيميل وكلمة المرور أولاً",
-				"warning",
-				5000,
-			);
-			return;
-		}
-
-		if (
-			!/^[a-zA-Z0-9._]+@(gmail|outlook|hotmail|live|yahoo|icloud|me)\.com$/.test(
-				email,
-			)
-		) {
-			addNotification(
-				"من فضلك أدخل بريد إلكتروني صالح!",
-				"warning",
-				5000,
-			);
-			return;
-		}
-
 		try {
-			const { user, accessToken } = await axios
-				.post(
-					`${import.meta.env.VITE_BACKEND_URL}/auth/signin`,
-					{
-						email,
-						password,
-					},
-					{
-						withCredentials: true,
-					},
-				)
-				.then(async (res) => {
-					const { data } = await axios.get(
-						`${import.meta.env.VITE_BACKEND_URL}/user/me`,
-						{
-							headers: {
-								Authorization: `Bearer ${res.data.accessToken}`,
-							},
-						},
-					);
-
-					return {
-						accessToken: res.data.accessToken,
-						user: data,
-					};
-				});
-
-			setUser(user);
-			privateHttpClient.setAccessToken(accessToken);
-			navigate("/shipments");
+			await signinSchema.validate(form, { abortEarly: false });
+			mutate(form);
 		} catch (err) {
-			const axiosMeg = axios.isAxiosError(err)
-				? err.response?.data?.message
-					? err.response?.data?.message
-					: err.message
-				: "شئ ما خطا";
-			addNotification(t(axiosMeg), "error", 5000);
+			toast.error(<ErrorToastContent message={err.errors} />);
 		} finally {
 			setForm({
 				email: "",

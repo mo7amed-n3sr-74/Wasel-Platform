@@ -5,35 +5,22 @@ import {
 	PiUserPlus,
 } from "react-icons/pi";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
-import { useEffect, useRef, useState, type FormEvent } from "react";
-import axios from "axios";
+import { useEffect, useState, type FormEvent } from "react";
 // Components
 import { useNotification } from "../../components/NotificationContext";
 import { useTranslation } from "react-i18next";
 import Main from "@/components/Main";
+import { signupSchema } from "@/shared/validation/schemas";
+import toast from "react-hot-toast";
+import ErrorToastContent from "@/components/ui/ErrorToastContent";
+import { useSignup } from "@/api/hooks/auth/useSignup";
+import type { SignupForm } from "@/shared/interfaces/Interfaces";
+import { useVerifyUsername } from "@/api/hooks/auth/useVerifyUsername";
 
 function Signup() {
-	interface Form {
-		username: string;
-		email: string;
-		password: string;
-		confirmPassword: string;
-	}
-
 	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
 	const { addNotification } = useNotification();
-	const { t } = useTranslation();
-
-	const usernameAlert = useRef<HTMLParagraphElement | null>(null);
-
-	// Components' states
-	const [form, setForm] = useState<Form>({
-		username: "",
-		email: "",
-		password: "",
-		confirmPassword: "",
-	});
 
 	// Role param extracting
 	const hasRole = searchParams.has("role");
@@ -45,57 +32,36 @@ function Signup() {
 		}
 	});
 
+	// Components' states
+	const { mutate } = useSignup();
+	const { mutate: verifyUsername } = useVerifyUsername();
+	const [form, setForm] = useState<SignupForm>({
+		username: "",
+		email: "",
+		password: "",
+		confirmPassword: "",
+	});
+
 	const handlingSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
 		const { username, email, password, confirmPassword } = form;
-
-		if (!username || !email || !password || !confirmPassword) {
-			addNotification("من فضلك أدخل الحقول أولاً", "warning", 3000);
-			return;
-		}
-
-		if (
-			!/^[a-zA-Z0-9_.]+@(gmail|outlook|me|hotmail|yahoo)\.com$/.test(
-				email,
-			)
-		) {
-			addNotification(
-				"من فضلك أدخل بريد إلكتروني صالح!",
-				"warning",
-				3000,
-			);
-			return;
-		}
-
 		if (password !== confirmPassword) {
 			addNotification("كلمة المرور غير متطابقة!", "warning", 3000);
 			return;
 		}
 
 		try {
-			const { data } = await axios.post(
-				`${import.meta.env.VITE_BACKEND_URL}/auth/signup`,
-				{
-					username,
-					email,
-					password,
-					role: role?.toLocaleUpperCase(),
-				},
-				{
-					withCredentials: true,
-				},
-			);
-
-			addNotification(t(data.message), "success", 5000);
+			await signupSchema.validate(form, { abortEarly: false })
+			mutate({
+				role: role?.toUpperCase() || '',
+				username,
+				email,
+				password
+			});	
 		} catch (err) {
-			addNotification(
-				t(err.response?.data?.message),
-				"error",
-				5000,
-			);
+			toast.error(<ErrorToastContent message={err.errors} />)
 		} finally {
-			usernameAlert.current?.classList.add("hidden");
 			setForm({
 				username: "",
 				email: "",
@@ -108,37 +74,11 @@ function Signup() {
 	const blurHandling = async (e) => {
 		e.preventDefault();
 		const { username } = form;
-		console.log(username);
-
-		const usernameMeg = (style: string, message: string) => {
-			if (usernameAlert.current) {
-				usernameAlert.current.classList.remove("hidden");
-				usernameAlert.current.innerText = message;
-				if (style === "red") {
-					usernameAlert.current.style = "color: #dc4444;";
-				} else {
-					usernameAlert.current.style = "color: #28a745;";
-				}
-			}
-		};
-
-		if (!username) {
-			usernameMeg("red", "من فضلك أدخل إسم المستخدم");
-			return;
-		}
-
-		try {
-			const { data } = await axios.post(
-				`${import.meta.env.VITE_BACKEND_URL}/auth/username-verify`,
-				{
-					username,
-				},
-			);
-
-			usernameMeg("green", t(data.message));
-		} catch (err) {
-			usernameMeg("red", t(err.response?.data?.message));
-		}
+		if (!username) return;
+		
+		verifyUsername({
+			username
+		});
 	};
 
 	return (
@@ -187,10 +127,6 @@ function Signup() {
 										className="w-full h-full font-main font-medium text-lg placeholder:text-base bg-transparent text-(--primary-text) placeholder:text-(--secondary-text)/75 focus:outline-none"
 									/>
 								</div>
-								<p
-									ref={usernameAlert}
-									className="hidden font-main text-sm mt-2"
-								></p>
 							</div>
 							<div className="w-full h-13 px-5 bg-(--tertiary-color)/25 rounded-20 flex items-center gap-2 border border-(--primary-color)/25">
 								<PiEnvelopeLight className="text-3xl text-(--secondary-text)" />

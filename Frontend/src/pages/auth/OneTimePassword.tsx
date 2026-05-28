@@ -1,6 +1,6 @@
 import Main from "@/components/Main";
 import { Spinner } from "@/components/ui/spinner";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { 
     PiCaretRight
 } from "react-icons/pi";
@@ -9,9 +9,12 @@ import { useProps } from "@/components/PropsProvider";
 import { useNotification } from "@/components/NotificationContext";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
+import { useVerifyOtp } from "@/api/hooks/auth/useVerifyOtp";
 
 function OneTimePassword() {
 
+    const { mutate } = useVerifyOtp();
     const otpItemsRef = useRef<{ [key: number]: HTMLInputElement | null }>({});
     const [ otp, setOtp ] = useState<{ [key: number]: string | number }>({
         0: "",
@@ -22,9 +25,8 @@ function OneTimePassword() {
         5: "",
     });
     const [ resend, setResend ] = useState<boolean>(false);
-    const [ email, setEmail ] = useState<string | null>("");
+    const [ email, setEmail ] = useState<string>("");
     const { addNotification } = useNotification();
-    const navigate = useNavigate();
     const { t } = useTranslation();
     const { 
         isLoading,
@@ -38,50 +40,16 @@ function OneTimePassword() {
         const enteredOtp = Object.values(otp).join("");
 
         if (!enteredOtp) {
-            addNotification(
-                t("من فضلك أدخل رمز التحقق أولاً"),
-                "warning",
-                5000
-            );
+            toast.error(t("من فضلك أدخل رمز التحقق أولاً"));
             return;
         }
 
-        try {
-            setIsLoading(true);
-            const { data: { message, resetToken } } = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/auth/otp-verify`,
-                {
-                    email,
-                    otp: enteredOtp
-                }
-            );
-
-            addNotification(
-                t(message),
-                "success",
-                5000
-            );
-
-            navigate(`/resetpassword?e=${resetToken}`)
-        } catch (err) {
-            const axiosMeg = axios.isAxiosError(err)? err.response?.data?.message : "shomething went wrong !"
-            const axiosStatus = axios.isAxiosError(err)? err.status : 500;
-            console.log(axiosStatus)
-
-            addNotification(
-                t(axiosMeg),
-                "error",
-                3000
-            );
-
-            if (axiosStatus === 501) {
-                setTimeout(() => {
-                    navigate("/forgetpassword");
-                }, 3000);
-            }
-        } finally {
-            setIsLoading(false);
-        }
+        setIsLoading(true);
+        mutate({
+            email, 
+            otp: enteredOtp
+        })
+        setIsLoading(false);
     }
 
     const handlingOtpResend = async () => {

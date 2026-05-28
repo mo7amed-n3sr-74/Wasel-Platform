@@ -34,6 +34,7 @@ export class DriversController {
   @Get(':driverId')
   @UseGuards(AuthGuard)
   getDriver(@Param('driverId') driverId: string) {
+
     return this.driversService.getDriver(driverId);
   }
 

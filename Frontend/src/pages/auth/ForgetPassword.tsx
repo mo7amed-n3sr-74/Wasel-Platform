@@ -1,52 +1,36 @@
 import { useRef, useState, type FormEvent } from "react";
 import { PiEnvelopeLight, PiCaretRight } from "react-icons/pi";
-import axios from "axios";
-import { useNotification } from "../../components/NotificationContext";
 import { useTranslation } from "react-i18next";
 import { useProps } from "@/components/PropsProvider";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Main from "@/components/Main";
 import { Spinner } from "@/components/ui/spinner";
+import toast from "react-hot-toast";
+import { useForgetPassword } from "@/api/hooks/auth/useForgetPassword";
 
 function ForgetPassword() {
 	const resetBtn = useRef<HTMLButtonElement | null>(null);
 	const [email, setEmail] = useState<string>("");
-	const { addNotification } = useNotification();
 	const { t } = useTranslation();
-	const navigate = useNavigate();
 	const { isLoading, setIsLoading } = useProps();
+	const { mutate } = useForgetPassword();
 
 	const handlingSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
 		if (!email) {
-			addNotification(
-				t("من فضلك أدخل الإيميل أولاً"),
-				"warning",
-				5000,
-			);
+			toast.error(t("من فضلك أدخل الإيميل أولاً"));
 			return;
 		}
 
 		try {
 			setIsLoading(true);
-			const {
-				data: { message },
-			} = await axios.post(
-				`${import.meta.env.VITE_BACKEND_URL}/auth/forget-password`,
-				{
-					email,
-				},
-			);
-			addNotification(t(message), "success", 5000);
-
+			mutate({
+				email
+			});
 			window.sessionStorage.setItem("email", email);
-			navigate(`/verification`);
 		} catch (err) {
-			const errorMessage = axios.isAxiosError(err)
-				? err.response?.data?.message
-				: "حدث خطأ ما";
-			addNotification(t(errorMessage), "error", 5000);
+			console.log(err);
 		} finally {
 			setEmail("");
 			setIsLoading(false);

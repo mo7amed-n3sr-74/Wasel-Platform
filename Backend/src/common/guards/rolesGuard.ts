@@ -14,7 +14,10 @@ export class RolesGuard implements CanActivate {
             return true;
         }
 
-        return this.MatchRoles(roles, request.user.role);
+        const x = this.MatchRoles(roles, request.user.role);
+        console.log('From rolesGuard: ', x);
+        return x;
+        
     }
 
     private MatchRoles = (roles: string[], userRole: string) => {

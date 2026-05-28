@@ -305,10 +305,12 @@ model Truck {
 
 model Driver {
   id                     String             @id @default(uuid())
+  driverId               String @unique()
   first_name             String
   last_name              String
-  age                    Int
+  age                    String
   national_id            String
+  phone                  String
   picture                String
   license_front          String
   license_back           String

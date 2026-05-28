@@ -1,64 +1,72 @@
 export interface Shipment {
-    id?: string,
-    shipmentId?: string,
-    origin: string,
-    origin_lat?: number,
-    origin_lng?: number,
-    destination: string,
-    destination_lat?: number,
-    destination_lng?: number,
-    shipmentType: string,
-    packaging: string,
-    goodsType: string,
-    weight: number,
-    length: number,
-    height: number,
-    width: number
-    stacking?: boolean,
-    pickupAt: Date | undefined,
-    deliveryAt: Date | undefined,
-    description: string,
-    ETA?: string,
-    distance?: string,
-    status?: "PENDING" | "IN_PROGRESS" | "IN_TRANSIT" | "DELAYED" | "DELIVERED" | "CANCELLED";
+	id?: string;
+	shipmentId?: string;
+	origin: string;
+	origin_lat?: number;
+	origin_lng?: number;
+	destination: string;
+	destination_lat?: number;
+	destination_lng?: number;
+	shipmentType: string;
+	packaging: string;
+	goodsType: string;
+	weight: number;
+	length: number;
+	height: number;
+	width: number;
+	stacking?: boolean;
+	pickupAt: Date | undefined;
+	deliveryAt: Date | undefined;
+	description: string;
+	ETA?: string;
+	distance?: string;
+	status?:
+		| "PENDING"
+		| "IN_PROGRESS"
+		| "IN_TRANSIT"
+		| "DELAYED"
+		| "DELIVERED"
+		| "CANCELLED";
 
-    urgent?: boolean,
-    additionalInsurance?: boolean,
-    twoDrivers?: boolean,
-    noFriday?: boolean,
+	urgent?: boolean;
+	additionalInsurance?: boolean;
+	twoDrivers?: boolean;
+	noFriday?: boolean;
 
-    budgetType: string,
-    suggestedBudget?: number,
-    paymentType: string
+	budgetType: string;
+	suggestedBudget?: number;
+	paymentType: string;
 
-    offerCount?: number
-    bestPrice?: number
+	offerCount?: number;
+	bestPrice?: number;
 
-    attachments?: [{
-        attachmentType: string,
-        url: string
-    }];
+	attachments?: [
+		{
+			attachmentType: string;
+			url: string;
+		},
+	];
 
-    profile?: {
-        userId: string,
-        first_name: string,
-        last_name: string
-    }
+	profile?: {
+		userId: string;
+		first_name: string;
+		last_name: string;
+	};
 
-    acceptedOffer?: {
-        id: string,
-        price: number,
-        proposal: string,
-        status: string,
-        createdAt: Date,
-        updatedAt: Date,
-        profile: {
-            username: string,
-            first_name: string | null,
-            last_name: string | null,
-            role: string
-        }
-    }
+	acceptedOffer?: {
+		id: string;
+		price: number;
+		proposal: string;
+		status: string;
+		createdAt: Date;
+		updatedAt: Date;
+		profile: {
+			username: string;
+			first_name: string | null;
+			last_name: string | null;
+			role: string;
+		};
+	};
 }
 
 export interface OfferResponse {
@@ -87,70 +95,115 @@ export interface OfferResponse {
 		packaging: string;
 		goodsType: string;
 		description: string;
-		status: "PENDING" | "IN_PROGRESS" | "IN_TRANSIT" | "DELAYED" | "DELIVERED" | "CANCELLED";
+		status:
+			| "PENDING"
+			| "IN_PROGRESS"
+			| "IN_TRANSIT"
+			| "DELAYED"
+			| "DELIVERED"
+			| "CANCELLED";
 		pickupAt: string;
 		deliveryAt: string;
 		urgent: boolean;
 		budgetType: string;
 		paymentType: string;
 		offerCount: number;
-        acceptedBy?: {
-            first_name: string,
-            last_name: string,
-            price: string
-        }
+		acceptedBy?: {
+			first_name: string;
+			last_name: string;
+			price: string;
+		};
 	};
 }
 
 export interface Attachment {
-    id: string,
-    shipmentId: string,
-    attachmentType: string, 
-    createAt: string 
-    updatedAt: string
-    url: string
+	id: string;
+	shipmentId: string;
+	attachmentType: string;
+	createAt: string;
+	updatedAt: string;
+	url: string;
 }
 
-export interface SigninForm { 
-    email: string,
-    password: string,
+export interface SignupForm {
+	username: string;
+	email: string;
+	password: string;
+	confirmPassword: string;
+}
+
+export interface SigninForm {
+	email: string;
+	password: string;
 }
 
 export interface ResetPasswordForm {
-    newPassword: string,
-    confirmPassword: string
+	newPassword: string;
+	confirmPassword: string;
 }
 
 export interface ShipmentFilter {
-    search: string,
-    type: string,
-    urgent: boolean,
-    minWeight: number | undefined,
-    maxWeight: number | undefined
+	search: string;
+	type: string;
+	urgent: boolean;
+	minWeight: number | undefined;
+	maxWeight: number | undefined;
 }
 
 export interface Offer {
-    price: number | string,
-    proposal: string
+	price: number | string;
+	proposal: string;
 }
 
 export interface ShipmentAttachment {
-    id: string,
-    url: string,
-    attachmentType: string,
-    name: string,
-    extension: string,
-    size: string,
-    shipmentId: string,
-    createdAt: string,
-    updatedAt: string
+	id: string;
+	url: string;
+	attachmentType: string;
+	name: string;
+	extension: string;
+	size: string;
+	shipmentId: string;
+	createdAt: string;
+	updatedAt: string;
 }
 
 // Dashboard
 export interface StatsResponse {
-    shipments: number,
-    activeShipment: number,
-    completedShipments: number,
-    balance: string,
-    totalSpent: string
+	shipments: number;
+	activeShipment: number;
+	completedShipments: number;
+	balance: string;
+	totalSpent: string;
+}
+
+// Driver
+export interface Driver {
+	id: string;
+	driverId: string;
+	first_name: string;
+	last_name: string;
+	age: string;
+	national_id: string;
+	phone: string;
+	picture: string;
+	license_front: string;
+	license_back: string;
+	national_id_card_front: string;
+	national_id_card_back: string;
+	status: "PENDING" | "APPROVED" | "REJECTED";
+	verificationStatus: "PENDING" | "APPROVED" | "REJECTED";
+	profileId: string;
+}
+
+export interface CreateDriverForm {
+	first_name: string;
+	last_name: string;
+	age: string;
+	national_id: string;
+	phone: string;
+	picture: File | null;
+	license_front: File | null;
+	license_back: File | null;
+	national_id_card_front: File | null;
+	national_id_card_back: File | null;
 }

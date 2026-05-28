@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsInt, Min, Max } from 'class-validator';
+import { IsNotEmpty, IsString, IsInt, Min, Max, IsNumber } from 'class-validator';
 
 export class CreateDriverDto {
   @IsNotEmpty()
@@ -10,12 +10,14 @@ export class CreateDriverDto {
   last_name: string;
 
   @IsNotEmpty()
-  @IsInt()
-  @Min(18)
-  @Max(100)
-  age: number;
+  @IsString()
+  age: string;
 
   @IsNotEmpty()
   @IsString()
   national_id: string;
+  
+  @IsNotEmpty()
+  @IsString()
+  phone: string;
 }

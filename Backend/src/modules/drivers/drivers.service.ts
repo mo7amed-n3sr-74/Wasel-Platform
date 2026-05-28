@@ -6,6 +6,7 @@ import { UpdateDriverDto } from './dto/updateDriverDto';
 import { DriverAttachments } from '@/shared/interfaces/interfaces';
 import { R2Service } from '@/shared/services/r2/r2.service';
 import * as path from 'path';
+import { OtpGenerator } from '@/shared/services/OtpGenerator';
 
 @Injectable()
 export class DriversService {
@@ -60,7 +61,7 @@ export class DriversService {
   ): Promise<{
     status: HttpStatus;
     message: string;
-    newDriver: Driver;
+    driver: Driver;
   }> {
     const { sub } = user;
 
@@ -122,10 +123,12 @@ export class DriversService {
 
     const newDriver = await this.prisma.driver.create({
       data: {
+        driverId: `dev-${OtpGenerator()}`,
         first_name: dto.first_name,
         last_name: dto.last_name,
         age: dto.age,
         national_id: dto.national_id,
+        phone: dto.phone,
         picture: picture_url,
         license_front: license_front_url,
         license_back: license_back_url,
@@ -148,7 +151,7 @@ export class DriversService {
     return {
       status: HttpStatus.OK,
       message: 'New driver has been added successfully',
-      newDriver,
+      driver: newDriver,
     };
   }
 

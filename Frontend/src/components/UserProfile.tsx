@@ -1,13 +1,10 @@
 import { Link } from "react-router-dom";
 import { 
     PiSignIn, 
-    PiBellLight,
 	PiAppWindow,
 	PiHeart
 } 
 from "react-icons/pi";
-import api from "@/utils/AxiosInstance";
-import { useNotification } from "./NotificationContext";
 import { useProps } from "./PropsProvider";
 import { 
 	DropdownMenu, 
@@ -24,31 +21,29 @@ import {
 	SettingsIcon,
 	CreditCardIcon
 } from 'lucide-react';
+import { useSignout } from "@/api/hooks/auth/useSignout";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
+import { isAxiosError } from "axios";
 
 function UserProfile() {
-	const { user, setUser } = useProps();
-	const { addNotification } = useNotification();
+	const { data, mutate, error, isError, isSuccess } = useSignout();
+	const { user } = useProps();
 
-	const logout = async () => {
-		try {
-			const { data: { message } } = await api.post(
-				`/auth/signout/`,
-				{},
-				{
-					withCredentials: true
-				}
-			);
-
-			setUser(null);
-			addNotification(
-				message,
-				"success",
-				5000
-			);
-		} catch (err) {
-			console.log(err);
-		}
+	const logout = () => {
+		mutate();
 	}
+
+	useEffect(() => {
+		if (isSuccess) {
+			toast.success(data.data.message);
+		}
+
+		if (isError) {
+			const axiosMeg = isAxiosError(error) ? error.response?.data?.message : "حدث شء ما خطأ";
+			toast.error(axiosMeg);
+		}
+	}, [isSuccess, isError])
 
 	return (
 		<>

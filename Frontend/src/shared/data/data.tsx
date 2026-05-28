@@ -144,7 +144,7 @@ export const sidebarItems = [
         hasAccess: ["admin", "manufacturer", "carrier_company", "independent_carrier"]
     },
     {
-        name: "السواقين",
+        name: "السائقين",
         icon: PiSteeringWheel,
         path: "drivers",
         hasAccess: ["admin", "carrier_company"]
