@@ -156,6 +156,12 @@ export const sidebarItems = [
         hasAccess: ["admin", "carrier_company"]
     },
     {
+        name: "الرصيد",
+        icon: PiWallet,
+        path: "balance",
+        hasAccess: ["admin", "manufacturer", "carrier_company", "independent_carrier"]
+    },
+    {
         name: "التتبعات",
         icon: PiPath,
         path: "tracking",

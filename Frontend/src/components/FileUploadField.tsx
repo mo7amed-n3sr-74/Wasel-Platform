@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { Upload, X } from "lucide-react";
+import React, { useRef, useEffect, useState } from "react";
+import { Upload, X, FileText } from "lucide-react";
 
 interface FileUploadFieldProps {
 	label: string;
@@ -21,7 +21,17 @@ function FileUploadField({
 	accept = "image/*",
 }: FileUploadFieldProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
-	const [isDragActive, setIsDragActive] = React.useState(false);
+	const [isDragActive, setIsDragActive] = useState(false);
+	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+	useEffect(() => {
+		if (file && file.type.startsWith("image/")) {
+			const url = URL.createObjectURL(file);
+			setPreviewUrl(url);
+			return () => URL.revokeObjectURL(url);
+		}
+		setPreviewUrl(null);
+	}, [file]);
 
 	const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
 		e.preventDefault();
@@ -136,9 +146,15 @@ function FileUploadField({
 						className="text-center w-full"
 						onClick={(e) => e.stopPropagation()}
 					>
-						<div className="flex items-center justify-center mb-2">
-							<span className="text-2xl">✓</span>
-						</div>
+						{previewUrl ? (
+							<img
+								src={previewUrl}
+								alt={file.name}
+								className="max-h-24 mx-auto mb-2 rounded object-contain"
+							/>
+						) : (
+							<FileText className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+						)}
 						<p className="text-sm font-medium text-gray-700 wrap-break-word px-2">
 							{file.name}
 						</p>

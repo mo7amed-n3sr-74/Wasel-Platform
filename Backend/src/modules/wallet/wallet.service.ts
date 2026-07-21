@@ -11,6 +11,7 @@ import {
   ShipmentPaymentStatus,
 } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/client';
+import { StripeService } from '@/modules/stripe';
 import { RechargeWalletDTO } from './dto/recharge-wallet.dto';
 import { WithdrawWalletDTO } from './dto/withdraw-wallet.dto';
 import { PayForShipmentDTO } from './dto/pay-for-shipment.dto';
@@ -27,7 +28,10 @@ import {
 export class WalletService {
   private readonly logger = new Logger(WalletService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly stripeService: StripeService,
+  ) {}
 
   /**
    * Initialize a wallet for a user
@@ -57,18 +61,110 @@ export class WalletService {
   }
 
   /**
+   * Create a Stripe PaymentIntent for wallet recharge
+   */
+  async createRechargeIntent(
+    walletId: string,
+    amount: number,
+    currency: string = 'usd',
+  ) {
+    const wallet = await this.prisma.wallet.findUnique({
+      where: { id: walletId },
+    });
+
+    if (!wallet) {
+      throw new WalletNotFoundException(walletId);
+    }
+
+    const paymentIntent = await this.stripeService.createPaymentIntent(
+      amount,
+      currency,
+    );
+
+    return {
+      clientSecret: paymentIntent.client_secret,
+      paymentIntentId: paymentIntent.id,
+    };
+  }
+
+  /**
+   * Create a PayPal order for wallet recharge
+   * Note: Requires PayPal SDK integration
+   */
+  async createPayPalRechargeOrder(
+    walletId: string,
+    amount: number,
+    currency: string = 'USD',
+  ) {
+    const wallet = await this.prisma.wallet.findUnique({
+      where: { id: walletId },
+    });
+
+    if (!wallet) {
+      throw new WalletNotFoundException(walletId);
+    }
+
+    // TODO: Integrate PayPal SDK
+    // const order = await paypal.orders.create({ ... });
+    // return { orderId: order.id, approvalUrl: order.links... };
+
+    throw new TransactionFailedException(
+      'PayPal integration is not yet configured',
+    );
+  }
+
+  /**
+   * Confirm and complete a wallet recharge after external payment
+   */
+  async confirmRecharge(
+    walletId: string,
+    amount: number | string,
+    paymentMethod: string,
+    externalTransactionId: string,
+    description?: string,
+  ) {
+    if (paymentMethod === 'stripe') {
+      const paymentIntent = await this.stripeService.retrievePaymentIntent(
+        externalTransactionId,
+      );
+
+      if (paymentIntent.status !== 'succeeded') {
+        throw new TransactionFailedException(
+          `Payment not completed. Status: ${paymentIntent.status}`,
+        );
+      }
+    }
+
+    // TODO: Add PayPal order verification
+    // if (paymentMethod === 'paypal') {
+    //   const order = await paypal.orders.get(externalTransactionId);
+    //   if (order.status !== 'COMPLETED') { ... }
+    // }
+
+    return this.recharge(
+      walletId,
+      amount,
+      paymentMethod,
+      externalTransactionId,
+      description || `Wallet recharge via ${paymentMethod}`,
+    );
+  }
+
+  /**
    * Get wallet balance
    * Uses pessimistic locking to prevent race conditions
    */
-  async getBalance(walletId: string): Promise<Decimal> {
+  async getBalance(req): Promise<Decimal> {
+    const userId = req.user.sub;
+
     try {
       const wallet = await this.prisma.wallet.findUnique({
-        where: { id: walletId },
+        where: { userId },
         select: { balance: true },
       });
 
       if (!wallet) {
-        throw new WalletNotFoundException(walletId);
+        throw new WalletNotFoundException("No wallet found");
       }
 
       return wallet.balance;
@@ -76,7 +172,7 @@ export class WalletService {
       if (error instanceof WalletNotFoundException) {
         throw error;
       }
-      this.logger.error(`Failed to get balance for wallet ${walletId}`, error);
+      this.logger.error(`Failed to get balance for wallet of user ${userId}`, error);
       throw new TransactionFailedException('Failed to retrieve balance');
     }
   }
@@ -253,6 +349,108 @@ export class WalletService {
         `Withdrawal failed: ${error.message}`,
       );
     }
+  }
+
+  /**
+   * Create a Stripe PaymentIntent for shipment payment
+   */
+  async createShipmentPaymentIntent(
+    walletId: string,
+    shipmentId: string,
+    amount: number,
+    currency: string = 'usd',
+  ) {
+    const wallet = await this.prisma.wallet.findUnique({
+      where: { id: walletId },
+    });
+
+    if (!wallet) {
+      throw new WalletNotFoundException(walletId);
+    }
+
+    const shipment = await this.prisma.shipment.findUnique({
+      where: { id: shipmentId },
+      select: { id: true },
+    });
+
+    if (!shipment) {
+      throw new ShipmentNotFoundException(shipmentId);
+    }
+
+    const paymentIntent = await this.stripeService.createPaymentIntent(
+      amount,
+      currency,
+    );
+
+    return {
+      clientSecret: paymentIntent.client_secret,
+      paymentIntentId: paymentIntent.id,
+    };
+  }
+
+  /**
+   * Create a PayPal order for shipment payment
+   */
+  async createShipmentPayPalOrder(
+    walletId: string,
+    shipmentId: string,
+    amount: number,
+    currency: string = 'USD',
+  ) {
+    const wallet = await this.prisma.wallet.findUnique({
+      where: { id: walletId },
+    });
+
+    if (!wallet) {
+      throw new WalletNotFoundException(walletId);
+    }
+
+    const shipment = await this.prisma.shipment.findUnique({
+      where: { id: shipmentId },
+      select: { id: true },
+    });
+
+    if (!shipment) {
+      throw new ShipmentNotFoundException(shipmentId);
+    }
+
+    // TODO: Integrate PayPal SDK
+    throw new TransactionFailedException(
+      'PayPal integration is not yet configured',
+    );
+  }
+
+  /**
+   * Confirm and complete a shipment payment after external payment
+   */
+  async confirmShipmentPayment(
+    walletId: string,
+    shipmentId: string,
+    amount: number | string,
+    paymentMethod: string,
+    externalTransactionId: string,
+  ) {
+    if (paymentMethod === 'stripe') {
+      const paymentIntent = await this.stripeService.retrievePaymentIntent(
+        externalTransactionId,
+      );
+
+      if (paymentIntent.status !== 'succeeded') {
+        throw new TransactionFailedException(
+          `Payment not completed. Status: ${paymentIntent.status}`,
+        );
+      }
+    }
+
+    // TODO: Add PayPal order verification
+
+    const { shipmentPayment, transaction } = await this.payForShipment(
+      walletId,
+      shipmentId,
+      amount,
+    );
+
+    return { shipmentPayment, transaction };
   }
 
   /**

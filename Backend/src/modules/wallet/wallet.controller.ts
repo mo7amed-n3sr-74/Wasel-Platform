@@ -7,6 +7,7 @@ import {
   Query,
   UseGuards,
   HttpStatus,
+  Req,
 } from '@nestjs/common';
 import { WalletService } from './wallet.service';
 import { RechargeWalletDTO } from './dto/recharge-wallet.dto';
@@ -18,21 +19,21 @@ import { AuthGuard } from '@/common/guards/jwtAuthGuard';
 export class WalletController {
   constructor(private readonly walletService: WalletService) {}
 
-  @UseGuards(AuthGuard)
-  @Get(':walletId')
-  async getWallet(@Param('walletId') walletId: string) {
-    const wallet = await this.walletService.getWallet(walletId);
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Wallet retrieved successfully',
-      data: wallet,
-    };
-  }
+  // @UseGuards(AuthGuard)
+  // @Get(':walletId')
+  // async getWallet(@Param('walletId') walletId: string) {
+  //   const wallet = await this.walletService.getWallet(walletId);
+  //   return {
+  //     statusCode: HttpStatus.OK,
+  //     message: 'Wallet retrieved successfully',
+  //     data: wallet,
+  //   };
+  // }
 
   @UseGuards(AuthGuard)
-  @Get(':walletId/balance')
-  async getBalance(@Param('walletId') walletId: string) {
-    const balance = await this.walletService.getBalance(walletId);
+  @Get('balance')
+  async getBalance(@Req() req: Request) {
+    const balance = await this.walletService.getBalance(req);
     return {
       statusCode: HttpStatus.OK,
       message: 'Balance retrieved successfully',
@@ -64,6 +65,60 @@ export class WalletController {
     };
   }
 
+  @Post('recharge/stripe/create-intent')
+  async createRechargeIntent(
+    @Body() body: { walletId: string; amount: number; currency?: string },
+  ) {
+    const result = await this.walletService.createRechargeIntent(
+      body.walletId,
+      body.amount,
+      body.currency,
+    );
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Stripe payment intent created',
+      data: result,
+    };
+  }
+
+  @Post('recharge/paypal/create-order')
+  async createPayPalRechargeOrder(
+    @Body() body: { walletId: string; amount: number; currency?: string },
+  ) {
+    const result = await this.walletService.createPayPalRechargeOrder(
+      body.walletId,
+      body.amount,
+      body.currency,
+    );
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'PayPal order created',
+      data: result,
+    };
+  }
+
+  @Post('recharge/confirm')
+  async confirmRecharge(@Body() body: {
+    walletId: string;
+    amount: number;
+    paymentMethod: string;
+    externalTransactionId: string;
+    description?: string;
+  }) {
+    const { wallet, transaction } = await this.walletService.confirmRecharge(
+      body.walletId,
+      body.amount,
+      body.paymentMethod,
+      body.externalTransactionId,
+      body.description,
+    );
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Wallet recharged successfully',
+      data: { wallet, transaction },
+    };
+  }
+
   @Post('recharge')
   async recharge(@Body() dto: RechargeWalletDTO) {
     const { wallet, transaction } = await this.walletService.recharge(
@@ -91,6 +146,63 @@ export class WalletController {
       statusCode: HttpStatus.CREATED,
       message: 'Withdrawal initiated successfully',
       data: { withdrawal, transaction },
+    };
+  }
+
+  @Post('pay-shipment/stripe/create-intent')
+  async createShipmentPaymentIntent(
+    @Body() body: { walletId: string; shipmentId: string; amount: number; currency?: string },
+  ) {
+    const result = await this.walletService.createShipmentPaymentIntent(
+      body.walletId,
+      body.shipmentId,
+      body.amount,
+      body.currency,
+    );
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Stripe payment intent created for shipment',
+      data: result,
+    };
+  }
+
+  @Post('pay-shipment/paypal/create-order')
+  async createShipmentPayPalOrder(
+    @Body() body: { walletId: string; shipmentId: string; amount: number; currency?: string },
+  ) {
+    const result = await this.walletService.createShipmentPayPalOrder(
+      body.walletId,
+      body.shipmentId,
+      body.amount,
+      body.currency,
+    );
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'PayPal order created for shipment',
+      data: result,
+    };
+  }
+
+  @Post('pay-shipment/confirm')
+  async confirmShipmentPayment(@Body() body: {
+    walletId: string;
+    shipmentId: string;
+    amount: number;
+    paymentMethod: string;
+    externalTransactionId: string;
+  }) {
+    const { shipmentPayment, transaction } =
+      await this.walletService.confirmShipmentPayment(
+        body.walletId,
+        body.shipmentId,
+        body.amount,
+        body.paymentMethod,
+        body.externalTransactionId,
+      );
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Shipment payment processed successfully',
+      data: { shipmentPayment, transaction },
     };
   }
 

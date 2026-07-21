@@ -198,25 +198,36 @@ export class TrucksService {
     const { truck_license_front, truck_license_back, truck_front } =
       truckAttachments || {};
 
+    const oldKeys: string[] = [];
+
     if (truck_license_front && truck_license_front.length > 0) {
-      await this.r2.uploadFile(
+      const ext = path.extname(truck_license_front[0].originalname);
+      const url = await this.r2.uploadFile(
         truck_license_front[0],
-        this.getR2KeyFromUrl(truck.truck_license_front)
+        `users/${sub}/trucks/${Date.now()}-${truck_license_front[0].fieldname}${ext}`,
       );
+      updateData.truck_license_front = url;
+      oldKeys.push(this.getR2KeyFromUrl(truck.truck_license_front));
     }
 
     if (truck_license_back && truck_license_back.length > 0) {
-      await this.r2.uploadFile(
+      const ext = path.extname(truck_license_back[0].originalname);
+      const url = await this.r2.uploadFile(
         truck_license_back[0],
-        this.getR2KeyFromUrl(truck.truck_license_back)
+        `users/${sub}/trucks/${Date.now()}-${truck_license_back[0].fieldname}${ext}`,
       );
+      updateData.truck_license_back = url;
+      oldKeys.push(this.getR2KeyFromUrl(truck.truck_license_back));
     }
 
     if (truck_front && truck_front.length > 0) {
-      await this.r2.uploadFile(
+      const ext = path.extname(truck_front[0].originalname);
+      const url = await this.r2.uploadFile(
         truck_front[0],
-        this.getR2KeyFromUrl(truck.truck_front)
+        `users/${sub}/trucks/${Date.now()}-${truck_front[0].fieldname}${ext}`,
       );
+      updateData.truck_front = url;
+      oldKeys.push(this.getR2KeyFromUrl(truck.truck_front));
     }
 
     const updatedTruck = await this.prisma.truck.update({
@@ -231,6 +242,8 @@ export class TrucksService {
         'Failed to update truck',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+
+    await Promise.all(oldKeys.map((key) => this.r2.deleteFile(key)));
 
     return {
       status: HttpStatus.OK,

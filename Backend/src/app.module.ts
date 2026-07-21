@@ -22,6 +22,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { WalletModule } from './modules/wallet';
 import { TrucksModule } from './modules/trucks/trucks.module';
 import { DriversModule } from './modules/drivers/drivers.module';
+import { StripeModule } from './modules/stripe';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { DriversModule } from './modules/drivers/drivers.module';
     WalletModule,
     TrucksModule,
     DriversModule,
+    StripeModule,
   ],
   controllers: [AppController, AddressController, R2Controller, DashboardController],
   providers: [AppService, AuthGuard, AddressService, R2Service, DashboardService],

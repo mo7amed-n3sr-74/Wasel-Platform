@@ -352,39 +352,56 @@ export class DriversService {
       national_id_card_back,
     } = attachments || {};
 
+    const oldKeys: string[] = [];
+
     if (picture && picture.length > 0) {
-      await this.r2.uploadFile(
+      const ext = path.extname(picture[0].originalname);
+      const url = await this.r2.uploadFile(
         picture[0],
-        this.getR2KeyFromUrl(driver.picture),
+        `users/${sub}/drivers/${Date.now()}-${picture[0].fieldname}${ext}`,
       );
+      updateData.picture = url;
+      oldKeys.push(this.getR2KeyFromUrl(driver.picture));
     }
 
     if (license_front && license_front.length > 0) {
-      await this.r2.uploadFile(
+      const ext = path.extname(license_front[0].originalname);
+      const url = await this.r2.uploadFile(
         license_front[0],
-        this.getR2KeyFromUrl(driver.license_front),
+        `users/${sub}/drivers/${Date.now()}-${license_front[0].fieldname}${ext}`,
       );
+      updateData.license_front = url;
+      oldKeys.push(this.getR2KeyFromUrl(driver.license_front));
     }
 
     if (license_back && license_back.length > 0) {
-      await this.r2.uploadFile(
+      const ext = path.extname(license_back[0].originalname);
+      const url = await this.r2.uploadFile(
         license_back[0],
-        this.getR2KeyFromUrl(driver.license_back),
+        `users/${sub}/drivers/${Date.now()}-${license_back[0].fieldname}${ext}`,
       );
+      updateData.license_back = url;
+      oldKeys.push(this.getR2KeyFromUrl(driver.license_back));
     }
 
     if (national_id_card_front && national_id_card_front.length > 0) {
-      await this.r2.uploadFile(
+      const ext = path.extname(national_id_card_front[0].originalname);
+      const url = await this.r2.uploadFile(
         national_id_card_front[0],
-        this.getR2KeyFromUrl(driver.national_id_card_front),
+        `users/${sub}/drivers/${Date.now()}-${national_id_card_front[0].fieldname}${ext}`,
       );
+      updateData.national_id_card_front = url;
+      oldKeys.push(this.getR2KeyFromUrl(driver.national_id_card_front));
     }
 
     if (national_id_card_back && national_id_card_back.length > 0) {
-      await this.r2.uploadFile(
+      const ext = path.extname(national_id_card_back[0].originalname);
+      const url = await this.r2.uploadFile(
         national_id_card_back[0],
-        this.getR2KeyFromUrl(driver.national_id_card_back),
+        `users/${sub}/drivers/${Date.now()}-${national_id_card_back[0].fieldname}${ext}`,
       );
+      updateData.national_id_card_back = url;
+      oldKeys.push(this.getR2KeyFromUrl(driver.national_id_card_back));
     }
 
     const updatedDriver = await this.prisma.driver.update({
@@ -399,6 +416,8 @@ export class DriversService {
         'Failed to update driver',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+
+    await Promise.all(oldKeys.map((key) => this.r2.deleteFile(key)));
 
     return {
       status: HttpStatus.OK,

@@ -3,11 +3,12 @@ import { WalletService } from './wallet.service';
 import { WalletController } from './wallet.controller';
 import { PrismaModule } from '@/database/prisma/prisma.module';
 import { JwtService } from '@nestjs/jwt';
+import { StripeModule } from '@/modules/stripe';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, StripeModule],
   providers: [WalletService, JwtService],
   controllers: [WalletController],
-  exports: [WalletService], // Export service for use in other modules
+  exports: [WalletService],
 })
 export class WalletModule {}
